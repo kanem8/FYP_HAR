@@ -785,9 +785,9 @@ if __name__ == '__main__':
     T = 100
     s = 22
     
-    ss.sliding_window(X_train, y_train, T, s, '/data/mark/Train/')
-    ss.sliding_window(X_test, y_test, T, s, '/data/mark/Test/')
-    ss.sliding_window(X_val, y_val, T, s, '/data/mark/Validation/')
+    ss.sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2/Train/')
+    ss.sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2/Test/')
+    ss.sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2/Validation/')
 
     
 
