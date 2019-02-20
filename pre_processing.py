@@ -692,7 +692,7 @@ def generate_data(dataset, target_filename):
     print("Final datasets with size: | train {0} | test {1} | ".format(X_train.shape,X_test.shape))
 
 
-    np.savetxt("D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/test_target.dat", y_test)
+    # np.savetxt("D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/test_target.dat", y_test)
 
     obj = [(X_train, y_train), (X_val, y_val), (X_test, y_test)]
 
@@ -725,7 +725,7 @@ def get_args():
     # target_filename = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/pamap23.data'
 
     # For GPU:
-    dataset = '/home/mark/RawDatasets/'
+    dataset = '/data/mark/RawDatasets/'
 
     target_filename = '/data/mark/NetworkDatasets/pamap2/pamap2.data'
 
