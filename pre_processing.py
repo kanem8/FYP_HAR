@@ -720,9 +720,14 @@ def get_args():
 
     #Path to the extracted folder containing the pamap2 dataset
 
-    dataset = 'D:/Fourth Year/FYP/'
+    # dataset = 'D:/Fourth Year/FYP/'
 
-    target_filename = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/pamap23.data'
+    # target_filename = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/pamap23.data'
+
+    # For GPU:
+    dataset = '/data/mark/RawDatasets'
+
+    target_filename = '/data/mark/NetworkDatasets/pamap2/pamap2.data'
 
     # Return all variable values
 
