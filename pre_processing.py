@@ -215,11 +215,11 @@ def complete_HR(data):
 
     pos_NaN = np.isnan(data) # returns an array of boolean values same size as data, true where data[i] = NaN value, false if not NaN
 
-    idx_NaN = np.where(pos_NaN == False)[0]
+    idx_NaN = np.where(pos_NaN == False)[0] # array with only non-NaN values
 
-    data_no_NaN = data * 0
+    data_no_NaN = data * 0 # initialize data_no_NaN as same size as data
 
-    for idx in range(idx_NaN.shape[0] - 1):
+    for idx in range(idx_NaN.shape[0] - 1): #for each non-NaN value
 
         data_no_NaN[idx_NaN[idx] : idx_NaN[idx + 1]] = data[idx_NaN[idx]]
 
@@ -494,7 +494,7 @@ def process_dataset_file(data):
 
         HR_no_NaN = complete_HR(data_x[:,0]) # passing Heart Rate column to complete_HR function (all rows, first column)
 
-        data_x[:,0] = HR_no_NaN
+        data_x[:,0] = HR_no_NaN # all rows of column 0 (HR) set to no-NaN matrix
 
         
 
@@ -619,7 +619,7 @@ def generate_data(dataset, target_filename):
 
                 print(y.shape)
 
-                X_train = np.vstack((X_train, x))
+                X_train = np.vstack((X_train, x)) #same as concatenate but for 2D?
 
                 y_train = np.concatenate([y_train, y])
 
