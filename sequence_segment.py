@@ -35,7 +35,7 @@ def sliding_window(X_data, y_data, T, s, target_filepath):
         
         # Don't plot figure of mixed labels
         if y_data[j] != y_data[j+T]:
-            label_idx = j + T/2
+            label_idx = j + int(T/2)
             #continue
         
         count_figures += 1
@@ -77,7 +77,7 @@ def sliding_window(X_data, y_data, T, s, target_filepath):
         image_IMU3 = target_filepath + "IMU_3Ankle/fig" + str(count_figures) + ".jpg"
         fig_IMU3.savefig(image_IMU3)
 
-        writer.writerow([('fig' + str(count_figures)), str(int(y_data[int(label_idx)]))])
+        writer.writerow([('fig' + str(count_figures)), str(int(y_data[label_idx]))])
         
         plt.close('all')
     
