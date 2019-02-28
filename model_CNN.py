@@ -53,6 +53,8 @@ class Single_IMU(nn.Module):
         X_imu1 = F.relu(self.conv2(X_imu1))
         X_imu1 = F.relu(self.conv2(X_imu1))
         X_imu1 = self.pool1(X_imu1)
+
+        X_imu1.print("After second pooling, shape is: {}".format(X_imu1.shape))
         
         # 1st fully connected
         X_imu1 = self.drop1(X_imu1)
