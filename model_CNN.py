@@ -30,18 +30,28 @@ torch.manual_seed(271828)
 np.random.seed(271728)
 
 C = 64
+rows = 72 # height
+columns = 108 # width
+p = 0 # padding
+s = 1 # stride
+krow = 1 
+kcol = 5
+
+outrows = (rows - krow + 2*p)/s + 1
+outcols = (columns - kcol + 2*p)/s + 1
+
 
 class Single_IMU(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
         super(Single_IMU, self).__init__()
-        self.conv1 = nn.Conv2d(num_channels, 64, kernel, stride=1, padding=(0,1)) # try no padding first, column padding - padding=(0,1)
-        self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=(0,1)) # try no padding first, column padding - padding=(0,1)
+        self.conv1 = nn.Conv2d(num_channels, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
+        self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
         self.pool1 = nn.MaxPool2d(pool)
         
         self.drop1 = nn.Dropout(0.5)
         
-        self.fc1 = nn.Linear(105*288*C, 512)
+        self.fc1 = nn.Linear(21*72*C, 512)
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256, num_classes)
         
@@ -58,7 +68,7 @@ class Single_IMU(nn.Module):
         
         # 1st fully connected
         X_imu1 = self.drop1(X_imu1)
-        X_imu1 = X_imu1.reshape(-1, 105*288*C)
+        X_imu1 = X_imu1.reshape(-1, 21*72*C)
         X_imu1 = F.relu(self.fc1(X_imu1))
         
         # 2nd fully connected
@@ -73,7 +83,7 @@ class Single_IMU(nn.Module):
 # transform for the training data
 train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
-    #transform.Resize(()),
+    transforms.Resize((72, 108)),
     transforms.ToTensor(),
     #transforms.Normalize([0.1307], [0.3081])
 ])
