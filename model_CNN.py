@@ -35,8 +35,8 @@ class Single_IMU(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
         super(Single_IMU, self).__init__()
-        self.conv1 = nn.Conv2d(num_channels, 64, kernel, stride=1) # try no padding first, column padding - padding=(0,1)
-        self.conv2 = nn.Conv2d(C, C, kernel, stride=1) # try no padding first, column padding - padding=(0,1)
+        self.conv1 = nn.Conv2d(num_channels, 64, kernel, stride=1, padding=None) # try no padding first, column padding - padding=(0,1)
+        self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=None) # try no padding first, column padding - padding=(0,1)
         self.pool1 = nn.MaxPool2d(pool)
         
         self.drop1 = nn.Dropout(0.5)
