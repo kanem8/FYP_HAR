@@ -144,26 +144,26 @@ dlparams = {'batch_size': 50,
           'num_workers': 4} #how many?
 epochs = 12
 
-# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Train/figure_labels.csv', ',', header=0)
+dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Train/figure_labels.csv', ',', header=0)
 # dataset_train = pd.read_csv('D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/figure_labels.csv', ',', header=0)
-dataset_train = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Train/figure_labels.csv', ',', header=0)
+# dataset_train = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Train/figure_labels.csv', ',', header=0)
 
 
-# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/'
+train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Train/'
 # train_path_imu1 = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/'
-train_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Train/'
+# train_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Train/'
 
 
 training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform)
 train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
 
 #Validation data:
-# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
+dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Validation/figure_labels.csv', ',', header=0)
 # dataset_validation = pd.read_csv('D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Validation/figure_labels.csv', ',', header=0)
-dataset_validation = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/figure_labels.csv', ',', header=0)
+# dataset_validation = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/figure_labels.csv', ',', header=0)
 
-# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_1Hand/'
-Validation_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/'
+Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Validation/'
+# Validation_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/'
 
 Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform)
 Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=50, num_workers=4, shuffle=False)
