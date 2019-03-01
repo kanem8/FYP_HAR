@@ -254,7 +254,7 @@ model = Single_IMU()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 
 
 def save_checkpoint(optimizer, model, epoch, filename):
@@ -297,6 +297,8 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
 
         train_loss = MovingAverage()
 
+        y_pred_train = []
+
         for batch, targets in train_loader_imu1:
             # Move the training data to the GPU
             batch = batch.to(device)
@@ -325,6 +327,18 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
 
         print('Training loss:', train_loss)
         train_losses.append(train_loss.value)
+
+        # Calculate training accuracy
+        y_pred_train = torch.Tensor(y_pred_train) #, dtype=torch.int64)
+        train_labels_tensor = torch.from_numpy(train_set_imu1.labels)
+        y_pred_train = y_pred_train.type_as(train_labels_tensor)
+
+        # success_array = (y_pred == valid_labels_tensor).float()
+        # success_tensor = torch.from_numpy(success_array)
+        success_tensor_train = (y_pred_train == train_labels_tensor).float()
+        accuracy_train = torch.mean(success_tensor_train)
+        # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
         # validation phase
