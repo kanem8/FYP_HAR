@@ -321,7 +321,7 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
             train_loss.update(loss)
 
             # update progress bar
-            progress.update(batch.shape[0], train_loss)
+            # progress.update(batch.shape[0], train_loss)
 
         print('Training loss:', train_loss)
         train_losses.append(train_loss.value)
@@ -361,7 +361,7 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
         valid_losses.append(valid_loss.value)
 
         # Calculate validation accuracy
-        y_pred = torch.Tensor(y_pred, dtype=torch.int64)
+        y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
         accuracy = torch.mean((y_pred == Validation_set_imu1.labels).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
