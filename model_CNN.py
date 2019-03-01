@@ -254,7 +254,7 @@ model = Single_IMU()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
+optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
 
 
 def save_checkpoint(optimizer, model, epoch, filename):
@@ -279,7 +279,7 @@ def load_checkpoint(optimizer, model, filename):
 #!mkdir -p checkpoints
 
 
-def train(optimizer, model, num_epochs=12, first_epoch=1):
+def train(optimizer, model, num_epochs, first_epoch=1):
     
     criterion = nn.CrossEntropyLoss()
 
@@ -396,4 +396,4 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=6)
