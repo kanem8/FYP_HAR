@@ -254,7 +254,10 @@ model = Single_IMU()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
+# optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
+optimizer = optim.RMSprop(model.parameters(), lr=0.001, weight_decay=0.95)
+
+
 
 
 def save_checkpoint(optimizer, model, epoch, filename):
