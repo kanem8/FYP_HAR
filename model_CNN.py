@@ -43,7 +43,7 @@ outcols = (columns - kcol + 2*p)/s + 1
 
 class Single_IMU(nn.Module):
 
-    def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
+    def __init__(self, num_channels=3, kernel=(1,5), pool=(1,2), num_classes=12):
         super(Single_IMU, self).__init__()
         self.conv1 = nn.Conv2d(num_channels, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
         self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
@@ -82,7 +82,7 @@ class Single_IMU(nn.Module):
 
 # transform for the training data
 train_transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
+    # transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
     transforms.Normalize([0.1307], [0.3081])
