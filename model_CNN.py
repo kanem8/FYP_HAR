@@ -330,7 +330,7 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
 
         # Calculate training accuracy
         y_pred_train = torch.Tensor(y_pred_train) #, dtype=torch.int64)
-        train_labels_tensor = torch.from_numpy(train_set_imu1.labels)
+        train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
         y_pred_train = y_pred_train.type_as(train_labels_tensor)
 
         # success_array = (y_pred == valid_labels_tensor).float()
