@@ -363,6 +363,8 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
         # Calculate validation accuracy
         y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
         valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
+        y_pred = y_pred.type_as(valid_labels_tensor)
+
         # success_array = (y_pred == valid_labels_tensor).float()
         # success_tensor = torch.from_numpy(success_array)
         success_tensor = (y_pred == valid_labels_tensor).float()
