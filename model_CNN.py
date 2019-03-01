@@ -322,6 +322,9 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
             # update average loss
             train_loss.update(loss)
 
+            # save training predictions
+            y_pred_train.extend(predictions.argmax(dim=1).cpu().numpy())
+
             # update progress bar
             # progress.update(batch.shape[0], train_loss)
 
