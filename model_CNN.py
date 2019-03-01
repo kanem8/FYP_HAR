@@ -155,7 +155,7 @@ train_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Train/'
 
 
 training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform)
-train_loader_imu1 = DataLoader(training_set_imu1, batch_size=16, num_workers=4, shuffle=True)
+train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
 
 #Validation data:
 # dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
@@ -166,7 +166,7 @@ dataset_validation = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Validat
 Validation_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/'
 
 Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform)
-Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=16, num_workers=4, shuffle=False)
+Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=50, num_workers=4, shuffle=False)
 
 
 
