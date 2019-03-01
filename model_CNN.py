@@ -85,7 +85,7 @@ train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
-    #transforms.Normalize([0.1307], [0.3081])
+    transforms.Normalize([0.1307], [0.3081])
 ])
 
 # use the same transform for the validation data
