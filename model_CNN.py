@@ -390,7 +390,7 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/sampleset-{:03d}.pkl'.format(epoch)
+        checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
     return train_losses, valid_losses, y_pred
