@@ -365,8 +365,9 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
         valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
         # success_array = (y_pred == valid_labels_tensor).float()
         # success_tensor = torch.from_numpy(success_array)
-        # accuracy = torch.mean(success_tensor)
-        accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        success_tensor = (y_pred == valid_labels_tensor).float()
+        accuracy = torch.mean(success_tensor)
+        # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
