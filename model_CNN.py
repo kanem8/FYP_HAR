@@ -430,16 +430,21 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         valid_losses.append(valid_loss.value)
 
         # Calculate validation accuracy
-        y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
-        y_pred = y_pred.type_as(valid_labels_tensor)
-
-        # success_array = (y_pred == valid_labels_tensor).float()
-        # success_tensor = torch.from_numpy(success_array)
-        success_tensor = (y_pred == valid_labels_tensor).float()
-        accuracy = torch.mean(success_tensor)
-        # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        y_pred = torch.tensor(y_pred, dtype=torch.int64)
+        accuracy = torch.mean((y_pred == Validation_set_imu1.labels).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+        # # Calculate validation accuracy
+        # y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
+        # valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
+        # y_pred = y_pred.type_as(valid_labels_tensor)
+
+        # # success_array = (y_pred == valid_labels_tensor).float()
+        # # success_tensor = torch.from_numpy(success_array)
+        # success_tensor = (y_pred == valid_labels_tensor).float()
+        # accuracy = torch.mean(success_tensor)
+        # # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        # print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
         checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
