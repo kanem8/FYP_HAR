@@ -68,7 +68,8 @@ class Single_IMU(nn.Module):
         
         # 1st fully connected
         X_imu1 = self.drop1(X_imu1)
-        X_imu1 = X_imu1.reshape(-1, 21*72*C)
+        # X_imu1 = X_imu1.reshape(-1, 21*72*C)
+        X_imu1 = X_imu1.reshape(21*72*C, -1)
         X_imu1 = F.relu(self.fc1(X_imu1))
         
         # 2nd fully connected
@@ -255,7 +256,7 @@ model.to(device)
 
 
 # optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.001, weight_decay=0.95)
+optimizer = optim.RMSprop(model.parameters(), lr=0.01, weight_decay=0.95)
 
 
 
