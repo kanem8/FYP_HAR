@@ -64,7 +64,7 @@ class Single_IMU(nn.Module):
         X_imu1 = F.relu(self.conv2(X_imu1))
         X_imu1 = self.pool1(X_imu1)
 
-        print("After second pooling, shape is: {}".format(X_imu1.size()))
+        # print("After second pooling, shape is: {}".format(X_imu1.size()))
         
         # 1st fully connected
         X_imu1 = self.drop1(X_imu1)
@@ -361,8 +361,8 @@ def train(optimizer, model, num_epochs=12, first_epoch=1):
         valid_losses.append(valid_loss.value)
 
         # Calculate validation accuracy
-        y_pred = torch.Tensor(y_pred, dtype=torch._C.int64)
-        accuracy = torch._C.mean((y_pred == Validation_set_imu1.labels).float())
+        y_pred = torch.Tensor(y_pred, dtype=torch.int64)
+        accuracy = torch.mean((y_pred == Validation_set_imu1.labels).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
