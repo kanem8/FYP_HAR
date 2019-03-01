@@ -69,7 +69,7 @@ class Single_IMU(nn.Module):
         # 1st fully connected
         X_imu1 = self.drop1(X_imu1)
         # X_imu1 = X_imu1.reshape(-1, 21*72*C)
-        X_imu1 = X_imu1.reshape(21*72*C, -1)
+        X_imu1 = X_imu1.reshape(X_imu1.size(0), -1)
         X_imu1 = F.relu(self.fc1(X_imu1))
         
         # 2nd fully connected
