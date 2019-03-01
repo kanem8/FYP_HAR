@@ -52,8 +52,8 @@ class Single_IMU(nn.Module):
         self.drop1 = nn.Dropout(0.5)
         
         self.fc1 = nn.Linear(21*72*C, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, num_classes)
+        self.fc2 = nn.Linear(512, 512)
+        self.fc3 = nn.Linear(512, num_classes)
         
     def forward(self, X_imu1):
         X_imu1 = F.relu(self.conv1(X_imu1))
@@ -254,7 +254,7 @@ model = Single_IMU()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, nesterov=True)
 
 
 def save_checkpoint(optimizer, model, epoch, filename):
