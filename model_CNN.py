@@ -383,17 +383,22 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Training loss:', train_loss)
         train_losses.append(train_loss.value)
 
-        # Calculate training accuracy
-        y_pred_train = torch.Tensor(y_pred_train) #, dtype=torch.int64)
+        y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
         train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
-        y_pred_train = y_pred_train.type_as(train_labels_tensor)
-
-        # success_array = (y_pred == valid_labels_tensor).float()
-        # success_tensor = torch.from_numpy(success_array)
-        success_tensor_train = (y_pred_train == train_labels_tensor).float()
-        accuracy_train = torch.mean(success_tensor_train)
-        # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
         print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
+
+        # # Calculate training accuracy
+        # y_pred_train = torch.Tensor(y_pred_train) #, dtype=torch.int64)
+        # train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
+        # y_pred_train = y_pred_train.type_as(train_labels_tensor)
+
+        # # success_array = (y_pred == valid_labels_tensor).float()
+        # # success_tensor = torch.from_numpy(success_array)
+        # success_tensor_train = (y_pred_train == train_labels_tensor).float()
+        # accuracy_train = torch.mean(success_tensor_train)
+        # # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
         # validation phase
@@ -403,6 +408,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # keep track of predictions
         y_pred = []
+
+        correct = 0
+        total = 0
 
         # We don't need gradients for validation, so wrap in 
         # no_grad to save memory
@@ -426,13 +434,20 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 # save predictions
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
+                y_pred2 = torch.max(predictions.data, 1)
+                total += targets.size(0)
+                correct += (y_pred2 == targets).sum().item()
+
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        accuracy = torch.mean((y_pred == Validation_set_imu1.labels).float())
+        valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
+        accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+        print('Test Accuracy attempt2: {} %'.format(100 * correct / total))
 
         # # Calculate validation accuracy
         # y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
