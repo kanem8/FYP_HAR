@@ -338,6 +338,11 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     test_csv1 = open(file1, 'w')
     writer1 = csv.writer(test_csv1)
     writer1.writerow(['Model_Prediction', 'Actual_Activity'])
+
+    file2 = '/home/mark/predictions2.csv'
+    test_csv2 = open(file2, 'w')
+    writer2 = csv.writer(test_csv2)
+    writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
     criterion = nn.CrossEntropyLoss()
 
@@ -442,6 +447,11 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
                 if epoch == 1:
                     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+                if epoch == 6:
+                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+
 
 
                 # y_pred2 = torch.max(predictions.data, 1)
