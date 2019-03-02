@@ -441,7 +441,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
                 if epoch == 1:
-                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy(), targets])
+                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
 
 
                 # y_pred2 = torch.max(predictions.data, 1)
