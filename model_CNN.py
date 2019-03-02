@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import pandas as pd
 # from itertools import izip
+import csv
 
 print('PyTorch version:', torch.__version__)
 
@@ -332,6 +333,11 @@ def load_checkpoint(optimizer, model, filename):
 
 
 def train(optimizer, model, num_epochs, first_epoch=1):
+
+    file1 = '/home/mark/predictions1.csv'
+    test_csv1 = open(file1, 'w')
+    writer1 = csv.writer(test_csv1)
+    writer1.writerow(['Model_Prediction', 'Actual_Activity'])
     
     criterion = nn.CrossEntropyLoss()
 
@@ -434,10 +440,14 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 # save predictions
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
-                y_pred2 = torch.max(predictions.data, 1)
-                total += targets.size(0)
-                targets_tensor = torch.from_numpy(targets)
-                correct += (y_pred2 == targets_tensor).sum().item()
+                if epoch == 1:
+                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy(), targets])
+
+
+                # y_pred2 = torch.max(predictions.data, 1)
+                # total += targets.size(0)
+                # targets_tensor = torch.from_numpy(targets)
+                # correct += (y_pred2 == targets_tensor).sum().item()
 
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
@@ -448,7 +458,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
-        print('Test Accuracy attempt2: {} %'.format(100 * correct / total))
+
+
+        # print('Test Accuracy attempt2: {} %'.format(100 * correct / total))
 
         # # Calculate validation accuracy
         # y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
