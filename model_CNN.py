@@ -436,7 +436,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
                 y_pred2 = torch.max(predictions.data, 1)
                 total += targets.size(0)
-                correct += (y_pred2 == targets).sum().item()
+                targets_tensor = torch.from_numpy(targets)
+                correct += (y_pred2 == targets_tensor).sum().item()
 
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
