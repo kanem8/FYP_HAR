@@ -449,7 +449,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
 
                 if epoch == 6:
-                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+                    writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
 
 
 
