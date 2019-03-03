@@ -83,10 +83,10 @@ outcols = (columns - kcol + 2*p)/s + 1
 #         return X_imu1  # logits 
 
 
-class Single_IMU(nn.Module):
+class Single_Branch(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
-        super(Single_IMU, self).__init__()
+        super(Single_Branch, self).__init__()
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
@@ -123,7 +123,7 @@ class Single_IMU(nn.Module):
     def forward(self, X_imu1):
         out = self.layer1(X_imu1)
         out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
+        out = out.reshape(-1, 21*72*C) # out = out.reshape(out.size(0), -1)
         out = self.fc1(out)
         out = self.fc2(out)
         out = self.fc3(out)
@@ -133,9 +133,9 @@ class Single_IMU(nn.Module):
 # transform for the training data
 train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)),
+    transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
     transforms.ToTensor(),
-    transforms.Normalize([0.1307], [0.3081])
+    transforms.Normalize([0.1307], [0.3081]) # unsure how to normalize the tensor correctly
 ])
 
 # use the same transform for the validation data
@@ -148,8 +148,6 @@ class Dataset(data.Dataset):
   'Characterizes a dataset for PyTorch'
   def __init__(self, dataframe, path, transform): #used to be passed: list_IDs, labels, 
         'Initialization'
-#         self.labels = labels
-#         self.list_IDs = list_IDs
 
         self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
         self.labels = dataframe.iloc[:,1:].values.reshape(-1)
@@ -168,11 +166,9 @@ class Dataset(data.Dataset):
         ID = self.list_IDs[index]
 
         # Load data and get label
-#         X = torch.load('data/' + ID + '.pt')
-        # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
+        # path should be something like /data/mark/NetworkDatasets/pamap2/Train/
         X = Image.open(self.path + ID + '.jpg')
 
-#         y = self.labels[ID] ID??
         y = self.labels[index]
     
         if self.transform:
@@ -273,34 +269,7 @@ class MovingAverage(AverageBase):
 
 
 
-
-from IPython.display import HTML, display
-
-class ProgressMonitor(object):
-    """
-    Custom IPython progress bar for training
-    """
-    
-    tmpl = """
-        <p>Loss: {loss:0.4f}   {value} / {length}</p>
-        <progress value='{value}' max='{length}', style='width: 100%'>{value}</progress>
-    """
-
-    def __init__(self, length):
-        self.length = length
-        self.count = 0
-        self.display = display(self.html(0, 0), display_id=True)
-        
-    def html(self, count, loss):
-        return HTML(self.tmpl.format(length=self.length, value=count, loss=loss))
-        
-    def update(self, count, loss):
-        self.count += count
-        self.display.update(self.html(self.count, loss))
-
-
-
-model = Single_IMU()
+model = Single_Branch()
 model.to(device)
 
 
@@ -334,15 +303,16 @@ def load_checkpoint(optimizer, model, filename):
 
 def train(optimizer, model, num_epochs, first_epoch=1):
 
-    file1 = '/home/mark/predictions1.csv'
-    test_csv1 = open(file1, 'w')
-    writer1 = csv.writer(test_csv1)
-    writer1.writerow(['Model_Prediction', 'Actual_Activity'])
+    # # Code for debugging
+    # file1 = '/home/mark/predictions1.csv'
+    # test_csv1 = open(file1, 'w')
+    # writer1 = csv.writer(test_csv1)
+    # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
 
-    file2 = '/home/mark/predictions2.csv'
-    test_csv2 = open(file2, 'w')
-    writer2 = csv.writer(test_csv2)
-    writer2.writerow(['Model_Prediction', 'Actual_Activity'])
+    # file2 = '/home/mark/predictions2.csv'
+    # test_csv2 = open(file2, 'w')
+    # writer2 = csv.writer(test_csv2)
+    # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
     criterion = nn.CrossEntropyLoss()
 
@@ -399,18 +369,6 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
         print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
-        # # Calculate training accuracy
-        # y_pred_train = torch.Tensor(y_pred_train) #, dtype=torch.int64)
-        # train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
-        # y_pred_train = y_pred_train.type_as(train_labels_tensor)
-
-        # # success_array = (y_pred == valid_labels_tensor).float()
-        # # success_tensor = torch.from_numpy(success_array)
-        # success_tensor_train = (y_pred_train == train_labels_tensor).float()
-        # accuracy_train = torch.mean(success_tensor_train)
-        # # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
-        # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
-
 
         # validation phase
         model.eval()
@@ -445,13 +403,12 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 # save predictions
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
-                if epoch == 1:
-                    writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+                # # Code for debugging
+                # if epoch == 1:
+                #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
 
-                if epoch == 6:
-                    writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-
+                # if epoch == 6:
+                #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
 
 
                 # y_pred2 = torch.max(predictions.data, 1)
@@ -467,22 +424,6 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
-
-
-
-        # print('Test Accuracy attempt2: {} %'.format(100 * correct / total))
-
-        # # Calculate validation accuracy
-        # y_pred = torch.Tensor(y_pred) #, dtype=torch.int64)
-        # valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
-        # y_pred = y_pred.type_as(valid_labels_tensor)
-
-        # # success_array = (y_pred == valid_labels_tensor).float()
-        # # success_tensor = torch.from_numpy(success_array)
-        # success_tensor = (y_pred == valid_labels_tensor).float()
-        # accuracy = torch.mean(success_tensor)
-        # # accuracy = torch.mean((y_pred == valid_labels_tensor).float())
-        # print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
         checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
