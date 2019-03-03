@@ -194,7 +194,7 @@ dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Train/figure_
 # dataset_train = pd.read_csv('D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/figure_labels.csv', ',', header=0)
 # dataset_train = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Train/figure_labels.csv', ',', header=0)
 
-
+# Path to figures of all IMUs together (for training set)
 train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Train/'
 # train_path_imu1 = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/'
 # train_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Train/'
@@ -324,9 +324,6 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # train phase
         model.train()
-
-        # create a progress bar
-        progress = ProgressMonitor(length=len(training_set_imu1))
 
         train_loss = MovingAverage()
 
