@@ -210,7 +210,7 @@ dlparams = {'batch_size': 50,
           'num_workers': 4} #how many?
 epochs = 12
 
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Train/figure_labels.csv', ',', header=0)
+dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Train/figure_labels.csv', ',', header=0)
 
 train_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/'
 train_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_2Chest/'
@@ -227,7 +227,7 @@ train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, 
 
 
 #Validation data:
-dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Validation/figure_labels.csv', ',', header=0)
+dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
 
 Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_1Hand/'
 Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_2Chest/'
