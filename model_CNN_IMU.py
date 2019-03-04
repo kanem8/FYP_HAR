@@ -44,51 +44,10 @@ outrows = (rows - krow + 2*p)/s + 1
 outcols = (columns - kcol + 2*p)/s + 1
 
 
-# class Single_IMU(nn.Module):
-
-#     def __init__(self, num_channels=3, kernel=(1,5), pool=(1,2), num_classes=12):
-#         super(Single_IMU, self).__init__()
-#         self.conv1 = nn.Conv2d(num_channels, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
-#         self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
-#         self.pool1 = nn.MaxPool2d(pool)
-        
-#         self.drop1 = nn.Dropout(0.5)
-        
-#         self.fc1 = nn.Linear(21*72*C, 512)
-#         self.fc2 = nn.Linear(512, 512)
-#         self.fc3 = nn.Linear(512, num_classes)
-        
-#     def forward(self, X_imu1):
-#         X_imu1 = F.relu(self.conv1(X_imu1))
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = self.pool1(X_imu1)
-        
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = self.pool1(X_imu1)
-
-#         # print("After second pooling, shape is: {}".format(X_imu1.size()))
-        
-#         # 1st fully connected
-#         X_imu1 = self.drop1(X_imu1)
-#         X_imu1 = X_imu1.reshape(-1, 21*72*C)
-#         # X_imu1 = X_imu1.reshape(X_imu1.size(0), -1)
-#         X_imu1 = F.relu(self.fc1(X_imu1))
-        
-#         # 2nd fully connected
-#         X_imu1 = self.drop1(X_imu1)
-#         X_imu1 = F.relu(self.fc2(X_imu1))
-        
-#         # 3rd fully connected
-#         X_imu1 = self.fc3(X_imu1)
-        
-#         return X_imu1  # logits 
-
-
-class Single_IMU(nn.Module):
+class CNN_IMU(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
-        super(Single_IMU, self).__init__()
+        super(CNN_IMU, self).__init__()
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
@@ -324,12 +283,12 @@ class ProgressMonitor(object):
 
 
 
-model = Single_IMU()
+model = CNN_IMU()
 model.to(device)
 
 
 # optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.001, weight_decay=0.95)
+optimizer = optim.RMSprop(model.parameters(), lr=0.001, alpha=0.95)
 
 
 
