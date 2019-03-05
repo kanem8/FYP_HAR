@@ -136,7 +136,7 @@ train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
     transforms.ToTensor(),
-    # transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
+    transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
 ])
 
 # use the same transform for the validation data
@@ -293,8 +293,8 @@ model.apply(weights_init)
 model.to(device)
 
 
-# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 
 
