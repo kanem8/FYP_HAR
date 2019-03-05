@@ -327,8 +327,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         count += 1
 
 
-    print(mean.shape)
-    print(std_dev.shape)
+    print(mean.size())
+    print(std_dev.size())
     # print("mean = ".format(mean))
     # print("std_dev = ".format(std_dev))
     
