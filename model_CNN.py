@@ -273,7 +273,7 @@ model = Single_Branch()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 # optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 
