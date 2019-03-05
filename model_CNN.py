@@ -135,7 +135,7 @@ train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
     transforms.ToTensor(),
-    transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
+    # transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
 ])
 
 # use the same transform for the validation data
@@ -445,4 +445,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
