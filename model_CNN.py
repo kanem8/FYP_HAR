@@ -110,7 +110,7 @@ class Single_Branch(nn.Module):
         )
         self.fc1 = nn.Sequential(
             # nn.Linear(21*72*C, 512),
-            nn.Linear(6*100*C, 512),
+            nn.Linear(4*100*C, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
