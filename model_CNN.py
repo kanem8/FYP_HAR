@@ -300,37 +300,38 @@ def load_checkpoint(optimizer, model, filename):
 
 #!mkdir -p checkpoints
 
+count = 0
+for batch, targets in train_loader_imu1:
+    if count > 0:
+        break
+    mean = batch.mean()
+    std_dev = batch.std()
+    count += 1
 
-def train(optimizer, model, num_epochs, first_epoch=1):
 
-    # # Code for debugging
-    # file1 = '/home/mark/predictions1.csv'
-    # test_csv1 = open(file1, 'w')
-    # writer1 = csv.writer(test_csv1)
-    # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
+print(mean.shape)
+print(std_dev.shape)
+# print("mean = ".format(mean))
+# print("std_dev = ".format(std_dev))
 
-    # file2 = '/home/mark/predictions2.csv'
-    # test_csv2 = open(file2, 'w')
-    # writer2 = csv.writer(test_csv2)
-    # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
+
+# def train(optimizer, model, num_epochs, first_epoch=1):
+
+#     # # Code for debugging
+#     # file1 = '/home/mark/predictions1.csv'
+#     # test_csv1 = open(file1, 'w')
+#     # writer1 = csv.writer(test_csv1)
+#     # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
+
+#     # file2 = '/home/mark/predictions2.csv'
+#     # test_csv2 = open(file2, 'w')
+#     # writer2 = csv.writer(test_csv2)
+#     # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
-    criterion = nn.CrossEntropyLoss()
+#     criterion = nn.CrossEntropyLoss()
 
-    train_losses = []
-    valid_losses = []
-    count = 0
-    for batch, targets in train_loader_imu1:
-        if count > 0:
-            break
-        mean = batch.mean()
-        std_dev = batch.std()
-        count += 1
-
-
-    print(mean.size())
-    print(std_dev.size())
-    # print("mean = ".format(mean))
-    # print("std_dev = ".format(std_dev))
+#     train_losses = []
+#     valid_losses = []
     
         
 
