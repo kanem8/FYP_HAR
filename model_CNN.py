@@ -8,6 +8,7 @@ from PIL import Image
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
+import torch.nn.init as init
 import torch.optim as optim
 import torchvision.transforms as transforms
 
@@ -269,12 +270,33 @@ class MovingAverage(AverageBase):
 
 
 
+def weights_init(m):
+    if isinstance(m, nn.Conv2d):
+        init.orthogonal_(m.weight.data)
+        init.orthogonal_(m.bias.data)
+
+    # elif isinstance(m, nn.BatchNorm2d):
+    #     init.orthogonal_(m.weight.data, mean=1, std=0.02)
+    #     init.orthogonal_(m.bias.data, 0)
+
+    elif isinstance(m, nn.Linear):
+        init.orthogonal_(m.weight.data)
+        init.orthogonal_(m.bias.data)
+
+    elif isinstance(m, nn.Sequential):
+        init.orthogonal_(m.weight.data)
+        init.orthogonal_(m.bias.data)
+
+
 model = Single_Branch()
+
+model.apply(weights_init)
+
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 
 
