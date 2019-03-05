@@ -309,8 +309,8 @@ for batch, targets in train_loader_imu1:
     count += 1
 
 
-print(mean.shape)
-print(std_dev.shape)
+print(mean)
+print(std_dev)
 # print("mean = ".format(mean))
 # print("std_dev = ".format(std_dev))
 
