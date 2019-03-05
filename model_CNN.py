@@ -273,8 +273,8 @@ model = Single_Branch()
 model.to(device)
 
 
-optimizer = optim.SGD(model.parameters(), lr=0.00001, momentum=0.9, nesterov=True)
-# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+# optimizer = optim.SGD(model.parameters(), lr=0.00001, momentum=0.9, nesterov=True)
+optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 
 
@@ -300,149 +300,149 @@ def load_checkpoint(optimizer, model, filename):
 
 #!mkdir -p checkpoints
 
-# count = 0
-# for batch, targets in train_loader_imu1:
-#     if count > 0:
-#         break
-#     mean = batch.mean()
-#     std_dev = batch.std()
-#     count += 1
+count = 0
+for batch, targets in train_loader_imu1:
+    if count > 1:
+        break
+    mean = batch.mean()
+    std_dev = batch.std()
+    count += 1
 
 
-# print(mean) # 0.9671
-# print(std_dev) # 0.0596
-# # print("mean = ".format(mean))
-# # print("std_dev = ".format(std_dev))
+print(mean) # 0.9671
+print(std_dev) # 0.0596
+# print("mean = ".format(mean))
+# print("std_dev = ".format(std_dev))
 
 
-def train(optimizer, model, num_epochs, first_epoch=1):
+# def train(optimizer, model, num_epochs, first_epoch=1):
 
-    # # Code for debugging
-    # file1 = '/home/mark/predictions1.csv'
-    # test_csv1 = open(file1, 'w')
-    # writer1 = csv.writer(test_csv1)
-    # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
+#     # # Code for debugging
+#     # file1 = '/home/mark/predictions1.csv'
+#     # test_csv1 = open(file1, 'w')
+#     # writer1 = csv.writer(test_csv1)
+#     # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
 
-    # file2 = '/home/mark/predictions2.csv'
-    # test_csv2 = open(file2, 'w')
-    # writer2 = csv.writer(test_csv2)
-    # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
+#     # file2 = '/home/mark/predictions2.csv'
+#     # test_csv2 = open(file2, 'w')
+#     # writer2 = csv.writer(test_csv2)
+#     # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
-    criterion = nn.CrossEntropyLoss()
+#     criterion = nn.CrossEntropyLoss()
 
-    train_losses = []
-    valid_losses = []
+#     train_losses = []
+#     valid_losses = []
     
         
 
-    for epoch in range(first_epoch, first_epoch + num_epochs):
-        print('Epoch', epoch)
+#     for epoch in range(first_epoch, first_epoch + num_epochs):
+#         print('Epoch', epoch)
 
-        # train phase
-        model.train()
+#         # train phase
+#         model.train()
 
-        train_loss = MovingAverage()
+#         train_loss = MovingAverage()
 
-        y_pred_train = []
+#         y_pred_train = []
 
-        for batch, targets in train_loader_imu1:
-            # Move the training data to the GPU
-            batch = batch.to(device)
-            targets = targets.to(device)
+#         for batch, targets in train_loader_imu1:
+#             # Move the training data to the GPU
+#             batch = batch.to(device)
+#             targets = targets.to(device)
 
-            # clear previous gradient computation
-            optimizer.zero_grad()
+#             # clear previous gradient computation
+#             optimizer.zero_grad()
 
-            # forward propagation
-            predictions = model(batch)
+#             # forward propagation
+#             predictions = model(batch)
 
-            # calculate the loss
-            loss = criterion(predictions, targets)
+#             # calculate the loss
+#             loss = criterion(predictions, targets)
 
-            # backpropagate to compute gradients
-            loss.backward()
+#             # backpropagate to compute gradients
+#             loss.backward()
 
-            # update model weights
-            optimizer.step()
+#             # update model weights
+#             optimizer.step()
 
-            # update average loss
-            train_loss.update(loss)
+#             # update average loss
+#             train_loss.update(loss)
 
-            # save training predictions
-            y_pred_train.extend(predictions.argmax(dim=1).cpu().numpy())
+#             # save training predictions
+#             y_pred_train.extend(predictions.argmax(dim=1).cpu().numpy())
 
-            # update progress bar
-            # progress.update(batch.shape[0], train_loss)
+#             # update progress bar
+#             # progress.update(batch.shape[0], train_loss)
 
-        print('Training loss:', train_loss)
-        train_losses.append(train_loss.value)
+#         print('Training loss:', train_loss)
+#         train_losses.append(train_loss.value)
 
-        y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
-        train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
-        accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
-        print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
-
-
-        # validation phase
-        model.eval()
-
-        valid_loss = RunningAverage()
-
-        # keep track of predictions
-        y_pred = []
-
-        correct = 0
-        total = 0
-
-        # We don't need gradients for validation, so wrap in 
-        # no_grad to save memory
-        with torch.no_grad():
-
-            for batch, targets in Validation_loader_imu1:
-
-                # Move the training batch to the GPU
-                batch = batch.to(device)
-                targets = targets.to(device)
-
-                # forward propagation
-                predictions = model(batch)
-
-                # calculate the loss
-                loss = criterion(predictions, targets)
-
-                # update running loss value
-                valid_loss.update(loss)
-
-                # save predictions
-                y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
-
-                # # Code for debugging
-                # if epoch == 1:
-                #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-                # if epoch == 6:
-                #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+#         y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
+#         train_labels_tensor = torch.from_numpy(training_set_imu1.labels)
+#         accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
+#         print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
-                # y_pred2 = torch.max(predictions.data, 1)
-                # total += targets.size(0)
-                # targets_tensor = torch.from_numpy(targets)
-                # correct += (y_pred2 == targets_tensor).sum().item()
+#         # validation phase
+#         model.eval()
 
-        print('Validation loss:', valid_loss)
-        valid_losses.append(valid_loss.value)
+#         valid_loss = RunningAverage()
 
-        # Calculate validation accuracy
-        y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
-        accuracy = torch.mean((y_pred == valid_labels_tensor).float())
-        print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+#         # keep track of predictions
+#         y_pred = []
 
-        # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
-        save_checkpoint(optimizer, model, epoch, checkpoint_filename)
+#         correct = 0
+#         total = 0
+
+#         # We don't need gradients for validation, so wrap in 
+#         # no_grad to save memory
+#         with torch.no_grad():
+
+#             for batch, targets in Validation_loader_imu1:
+
+#                 # Move the training batch to the GPU
+#                 batch = batch.to(device)
+#                 targets = targets.to(device)
+
+#                 # forward propagation
+#                 predictions = model(batch)
+
+#                 # calculate the loss
+#                 loss = criterion(predictions, targets)
+
+#                 # update running loss value
+#                 valid_loss.update(loss)
+
+#                 # save predictions
+#                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
+
+#                 # # Code for debugging
+#                 # if epoch == 1:
+#                 #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+#                 # if epoch == 6:
+#                 #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+
+#                 # y_pred2 = torch.max(predictions.data, 1)
+#                 # total += targets.size(0)
+#                 # targets_tensor = torch.from_numpy(targets)
+#                 # correct += (y_pred2 == targets_tensor).sum().item()
+
+#         print('Validation loss:', valid_loss)
+#         valid_losses.append(valid_loss.value)
+
+#         # Calculate validation accuracy
+#         y_pred = torch.tensor(y_pred, dtype=torch.int64)
+#         valid_labels_tensor = torch.from_numpy(Validation_set_imu1.labels)
+#         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+#         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+#         # Save a checkpoint
+#         checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
+#         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
-    return train_losses, valid_losses, y_pred
+#     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
+# train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
