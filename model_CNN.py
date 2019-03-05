@@ -273,8 +273,8 @@ model = Single_Branch()
 model.to(device)
 
 
-# optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+optimizer = optim.SGD(model.parameters(), lr=0.00001, momentum=0.9, nesterov=True)
+# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 
 
@@ -445,4 +445,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
