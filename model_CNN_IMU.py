@@ -110,7 +110,7 @@ train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
-    transforms.Normalize([0.1307], [0.3081])
+    # transforms.Normalize([0.1307], [0.3081])
 ])
 
 # use the same transform for the validation data
@@ -255,43 +255,11 @@ class MovingAverage(AverageBase):
         return self.value
 
 
-
-
-from IPython.display import HTML, display
-
-class ProgressMonitor(object):
-    """
-    Custom IPython progress bar for training
-    """
-    
-    tmpl = """
-        <p>Loss: {loss:0.4f}   {value} / {length}</p>
-        <progress value='{value}' max='{length}', style='width: 100%'>{value}</progress>
-    """
-
-    def __init__(self, length):
-        self.length = length
-        self.count = 0
-        self.display = display(self.html(0, 0), display_id=True)
-        
-    def html(self, count, loss):
-        return HTML(self.tmpl.format(length=self.length, value=count, loss=loss))
-        
-    def update(self, count, loss):
-        self.count += count
-        self.display.update(self.html(self.count, loss))
-
-
-
 model = CNN_IMU()
 model.to(device)
 
-
 # optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
 optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
-
-
-
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
@@ -339,7 +307,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         model.train()
 
         # create a progress bar
-        progress = ProgressMonitor(length=len(training_set_imu1))
+        # progress = ProgressMonitor(length=len(training_set_imu1))
 
         train_loss = MovingAverage()
 
@@ -455,4 +423,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=6)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
