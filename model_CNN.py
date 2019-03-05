@@ -276,16 +276,11 @@ def weights_init(m):
         if m.bias is not None:
             init.normal_(m.bias.data)
 
-    # elif isinstance(m, nn.BatchNorm2d):
-    #     init.orthogonal_(m.weight.data, mean=1, std=0.02)
-    #     init.orthogonal_(m.bias.data, 0)
+    elif isinstance(m, nn.BatchNorm2d):
+        init.orthogonal_(m.weight.data)
+        init.orthogonal_(m.bias.data)
 
     elif isinstance(m, nn.Linear):
-        init.orthogonal_(m.weight.data)
-        if m.bias is not None:
-            init.normal_(m.bias.data)
-
-    elif isinstance(m, nn.Sequential):
         init.orthogonal_(m.weight.data)
         if m.bias is not None:
             init.normal_(m.bias.data)
