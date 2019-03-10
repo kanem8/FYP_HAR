@@ -137,7 +137,7 @@ class Single_Branch(nn.Module):
 train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     # transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
-    transforms.Resize((100, 40)), # original size: (288, 432)
+    transforms.Resize((100, 40)), # original size: (288, 432), resized to 25% of original size
     transforms.ToTensor(),
     transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
 ])
@@ -194,15 +194,15 @@ dlparams = {'batch_size': 50,
           'num_workers': 4} #how many?
 epochs = 12
 
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Train/figure_labels.csv', ',', header=0)
-# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/figure_labels.csv', ',', header=0)
+# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Train/figure_labels.csv', ',', header=0)
+dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/figure_labels.csv', ',', header=0)
 
 # dataset_train = pd.read_csv('D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/figure_labels.csv', ',', header=0)
 # dataset_train = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Train/figure_labels.csv', ',', header=0)
 
 # Path to figures of all IMUs together (for training set)
-train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Train/'
-# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/'
+# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Train/'
+train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/'
 
 # train_path_imu1 = 'D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Train/'
 # train_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Train/'
@@ -212,14 +212,14 @@ training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform)
 train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
 
 #Validation data:
-dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Validation/figure_labels.csv', ',', header=0)
-# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/figure_labels.csv', ',', header=0)
+# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn/Validation/figure_labels.csv', ',', header=0)
+dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/figure_labels.csv', ',', header=0)
 
 # dataset_validation = pd.read_csv('D:/Fourth Year/FYP/PAMAP2_Dataset/Sample_dataset/Validation/figure_labels.csv', ',', header=0)
 # dataset_validation = pd.read_csv('/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/figure_labels.csv', ',', header=0)
 
-Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Validation/'
-# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/'
+# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn/Validation/'
+Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/'
 
 # Validation_path_imu1 = '/home/mark/Repo/FYP_HAR/Sample_dataset/Validation/'
 
