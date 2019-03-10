@@ -109,8 +109,8 @@ class Single_Branch(nn.Module):
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
-            # nn.Linear(21*72*C, 512),
-            nn.Linear(4*100*C, 512),
+            nn.Linear(21*72*C, 512),
+            # nn.Linear(4*100*C, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
@@ -125,8 +125,8 @@ class Single_Branch(nn.Module):
     def forward(self, X_imu1):
         out = self.layer1(X_imu1)
         out = self.layer2(out)
-        # out = out.reshape(-1, 21*72*C) # out = out.reshape(out.size(0), -1)
-        out = out.reshape(-1, 4*100*C) 
+        out = out.reshape(-1, 21*72*C) # out = out.reshape(out.size(0), -1)
+        # out = out.reshape(-1, 4*100*C) 
         out = self.fc1(out)
         out = self.fc2(out)
         out = self.fc3(out)
@@ -136,8 +136,8 @@ class Single_Branch(nn.Module):
 # transform for the training data
 train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
-    # transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
-    transforms.Resize((100, 40)), # original size: (288, 432), resized to 25% of original size
+    transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
+    # transforms.Resize((100, 40)), # original size: (288, 432), resized to 25% of original size
     transforms.ToTensor(),
     transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
 ])
