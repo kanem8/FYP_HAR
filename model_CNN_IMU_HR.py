@@ -283,8 +283,8 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
-# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
