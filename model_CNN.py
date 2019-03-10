@@ -109,17 +109,18 @@ class Single_Branch(nn.Module):
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
-            nn.Linear(21*72*C, 512),
+            # nn.Linear(21*72*C, 512),
+            nn.Linear(21*72*C, 128),
             # nn.Linear(4*100*C, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
         self.fc2 = nn.Sequential(
-            nn.Linear(512, 512),
+            nn.Linear(128, 128),
             nn.ReLU()
         )
         self.fc3 = nn.Sequential(
-            nn.Linear(512, num_classes)
+            nn.Linear(128, num_classes)
         )
         
     def forward(self, X_imu1):
