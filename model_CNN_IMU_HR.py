@@ -99,8 +99,8 @@ class CNN_IMU_HR(nn.Module):
 
         out4 = self.layer1(X_HR)
         out4 = self.layer2(out4)
-        out4 = out3.reshape(-1, 21*72*C)
-        out4 = self.fc1(out3)
+        out4 = out4.reshape(-1, 21*72*C)
+        out4 = self.fc1(out4)
 
         combined = torch.cat((out1, out2, out3, out4), dim=1)
 
