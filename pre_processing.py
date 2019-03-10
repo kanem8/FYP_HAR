@@ -790,16 +790,21 @@ if __name__ == '__main__':
     # ss.sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2/Test/')
     # ss.sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2/Validation/')
 
+    # to generate individual IMU plots with heart rate sensor
+    ss.sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Train/')
+    ss.sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Test/')
+    ss.sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Validation/')
+
     # # to generate plots of IMUs stored together
     # ss.cnn_sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Train/')
     # ss.cnn_sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Test/')
     # ss.cnn_sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Validation/')
 
 
-    # to generate plots of IMUs stored together with heart rate sensor
-    ss.cnn_sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/')
-    ss.cnn_sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Test/')
-    ss.cnn_sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/')
+    # # to generate plots of IMUs stored together with heart rate sensor
+    # ss.cnn_sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/')
+    # ss.cnn_sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Test/')
+    # ss.cnn_sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/')
 
     
 
