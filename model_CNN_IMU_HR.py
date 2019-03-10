@@ -30,7 +30,7 @@ torch.version.cuda
 torch.manual_seed(271828)
 np.random.seed(271728)
 
-m = 3 # number of branches
+m = 4 # number of branches
 
 C = 64
 rows = 72 # height
@@ -44,10 +44,10 @@ outrows = (rows - krow + 2*p)/s + 1
 outcols = (columns - kcol + 2*p)/s + 1
 
 
-class CNN_IMU(nn.Module):
+class CNN_IMU_HR(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
-        super(CNN_IMU, self).__init__()
+        super(CNN_IMU_HR, self).__init__()
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
@@ -81,7 +81,7 @@ class CNN_IMU(nn.Module):
             nn.Linear(512, num_classes)
         )
         
-    def forward(self, X_imu1, X_imu2, X_imu3):
+    def forward(self, X_imu1, X_imu2, X_imu3, X_HR):
         out1 = self.layer1(X_imu1)
         out1 = self.layer2(out1)
         out1 = out1.reshape(-1, 21*72*C)
@@ -92,13 +92,17 @@ class CNN_IMU(nn.Module):
         out2 = out2.reshape(-1, 21*72*C)
         out2 = self.fc1(out2)
 
-
         out3 = self.layer1(X_imu3)
         out3 = self.layer2(out3)
         out3 = out3.reshape(-1, 21*72*C)
         out3 = self.fc1(out3)
 
-        combined = torch.cat((out1, out2, out3), dim=1)
+        out4 = self.layer1(X_HR)
+        out4 = self.layer2(out4)
+        out4 = out3.reshape(-1, 21*72*C)
+        out4 = self.fc1(out3)
+
+        combined = torch.cat((out1, out2, out3, out4), dim=1)
 
         combined = self.fc2(combined)
         combined = self.fc3(combined)
@@ -169,18 +173,18 @@ dlparams = {'batch_size': 50,
           'num_workers': 4} #how many?
 epochs = 12
 
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Train/figure_labels.csv', ',', header=0)
+# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Train/figure_labels.csv', ',', header=0)
 
-train_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/'
-train_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_2Chest/'
-train_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_3Ankle/'
+# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/'
+# train_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_2Chest/'
+# train_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_3Ankle/'
 
-# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
+dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
 
-# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
-# train_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_2Chest/'
-# train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
-# train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
+train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
+train_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_2Chest/'
+train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
+train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
 
 
 training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform)
@@ -192,23 +196,23 @@ train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, 
 training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform)
 train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
 
-# training_set_HR = Dataset(dataset_train, train_path_HR, train_transform)
-# train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
+training_set_HR = Dataset(dataset_train, train_path_HR, train_transform)
+train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
 
 
-# Validation data:
-dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
+#Validation data:
+# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
 
-Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_1Hand/'
-Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_2Chest/'
-Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_3Ankle/'
+# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_1Hand/'
+# Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_2Chest/'
+# Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_3Ankle/'
 
-# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Validation/figure_labels.csv', ',', header=0)
+dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Validation/figure_labels.csv', ',', header=0)
 
-# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_1Hand/'
-# Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Chest/'
-# Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
-# Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
+Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_1Hand/'
+Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Chest/'
+Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
+Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
 
 Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform)
 Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=50, num_workers=4, shuffle=False)
@@ -219,8 +223,8 @@ Validation_loader_imu2 = DataLoader(Validation_set_imu2, batch_size=50, num_work
 Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform)
 Validation_loader_imu3 = DataLoader(Validation_set_imu3, batch_size=50, num_workers=4, shuffle=False)
 
-# Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform)
-# Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
+Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform)
+Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
 
 
 
@@ -276,11 +280,11 @@ class MovingAverage(AverageBase):
         return self.value
 
 
-model = CNN_IMU()
+model = CNN_IMU_HR()
 model.to(device)
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-# optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
@@ -334,21 +338,23 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         y_pred_train = []
 
-        for (batch, targets), (batch2, targets2), (batch3, targets3) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3):
+        for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3, train_loader_HR):
             # Move the training data to the GPU
             batch = batch.to(device)
             targets = targets.to(device)
             batch2 = batch2.to(device)
             targets2 = targets2.to(device)            
             batch3 = batch3.to(device)
-            targets3 = targets3.to(device)            
+            targets3 = targets3.to(device)   
+            batch4 = batch4.to(device)
+            targets4 = targets4.to(device)           
 
 
             # clear previous gradient computation
             optimizer.zero_grad()
 
             # forward propagation
-            predictions = model(batch, batch2, batch3)
+            predictions = model(batch, batch2, batch3, batch4)
 
             # calculate the loss
             loss = criterion(predictions, targets)
@@ -392,7 +398,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         # no_grad to save memory
         with torch.no_grad():
 
-            for (batch, targets), (batch2, targets2), (batch3, targets3) in zip(Validation_loader_imu1, Validation_loader_imu2, Validation_loader_imu3):
+            for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(Validation_loader_imu1, Validation_loader_imu2, Validation_loader_imu3, Validation_loader_HR):
 
                 # Move the training data to the GPU
                 batch = batch.to(device)
@@ -401,9 +407,11 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 targets2 = targets2.to(device)            
                 batch3 = batch3.to(device)
                 targets3 = targets3.to(device)  
+                batch4 = batch4.to(device)
+                targets4 = targets4.to(device)  
 
                 # forward propagation
-                predictions = model(batch, batch2, batch3)
+                predictions = model(batch, batch2, batch3, batch4)
 
                 # calculate the loss
                 loss = criterion(predictions, targets)
@@ -438,7 +446,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/CNN_IMUDataset-{:03d}.pkl'.format(epoch)
+        checkpoint_filename = '/home/mark/checkpoints/CNN_IMU_HRDataset-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
     return train_losses, valid_losses, y_pred
