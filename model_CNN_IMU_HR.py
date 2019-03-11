@@ -109,6 +109,19 @@ class CNN_IMU_HR(nn.Module):
 
         return combined # logits
 
+
+# # transform for the training data
+# train_transform = transforms.Compose([
+#     transforms.Grayscale(num_output_channels=1),
+#     transforms.Resize((72, 108)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.9671], [0.0596])
+#     # transforms.Normalize([0.1307], [0.3081])
+# ])
+# 
+# # use the same transform for the validation data
+# valid_transform = train_transform
+
 # transform for the training data
 train_transform_imu = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
@@ -141,9 +154,6 @@ valid_transform_HR = transforms.Compose([
     transforms.Normalize([0.9962], [0.0214])
     # transforms.Normalize([0.1307], [0.3081])
 ])
-
-# # use the same transform for the validation data
-# valid_transform = train_transform
 
 
 from torch.utils import data
@@ -213,16 +223,16 @@ train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
 
 
 training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform_imu)
-train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
+train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=False)
 
 training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
-train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
+train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=False)
 
 training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
-train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
+train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=False)
 
 training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
-train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
+train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=False)
 
 
 #Validation data:
