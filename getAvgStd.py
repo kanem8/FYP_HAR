@@ -140,7 +140,7 @@ for batch, targets in train_loader_imu1:
     mean = batch.mean()
     print("mean = {}".format(mean))
     std_dev = batch.std()
-    print("mean = {}".format(std_dev))
+    print("std dev = {}".format(std_dev))
     count += 1
 
 
