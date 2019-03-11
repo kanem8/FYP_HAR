@@ -384,6 +384,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
             batch4 = batch4.to(device)
             targets4 = targets4.to(device)           
 
+            import pdb; pdb.set_trace()
+
 
             # clear previous gradient computation
             optimizer.zero_grad()
