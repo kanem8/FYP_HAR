@@ -110,7 +110,7 @@ class CNN_IMU_HR(nn.Module):
         return combined # logits
 
 # transform for the training data
-train_transform = transforms.Compose([
+train_transform_imu = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
@@ -118,8 +118,32 @@ train_transform = transforms.Compose([
     # transforms.Normalize([0.1307], [0.3081])
 ])
 
-# use the same transform for the validation data
-valid_transform = train_transform
+train_transform_HR = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Resize((72, 108)),
+    transforms.ToTensor(),
+    transforms.Normalize([0.9959], [0.0218])
+    # transforms.Normalize([0.1307], [0.3081])
+])
+
+valid_transform_imu = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Resize((72, 108)),
+    transforms.ToTensor(),
+    transforms.Normalize([0.959], [0.062])
+    # transforms.Normalize([0.1307], [0.3081])
+])
+
+valid_transform_HR = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Resize((72, 108)),
+    transforms.ToTensor(),
+    transforms.Normalize([0.9962], [0.0214])
+    # transforms.Normalize([0.1307], [0.3081])
+])
+
+# # use the same transform for the validation data
+# valid_transform = train_transform
 
 
 from torch.utils import data
@@ -188,16 +212,16 @@ train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
 train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
 
 
-training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform)
+training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform_imu)
 train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform)
+training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
 train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform)
+training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
 train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_HR = Dataset(dataset_train, train_path_HR, train_transform)
+training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
 train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
 
 
@@ -215,16 +239,16 @@ Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Che
 Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
 Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
 
-Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform)
+Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform_imu)
 Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=50, num_workers=4, shuffle=False)
 
-Validation_set_imu2 = Dataset(dataset_validation, Validation_path_imu2, valid_transform)
+Validation_set_imu2 = Dataset(dataset_validation, Validation_path_imu2, valid_transform_imu)
 Validation_loader_imu2 = DataLoader(Validation_set_imu2, batch_size=50, num_workers=4, shuffle=False)
 
-Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform)
+Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform_imu)
 Validation_loader_imu3 = DataLoader(Validation_set_imu3, batch_size=50, num_workers=4, shuffle=False)
 
-Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform)
+Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform_HR)
 Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
 
 
@@ -285,7 +309,7 @@ model = CNN_IMU_HR()
 model.to(device)
 
 # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.00001, alpha=0.95)
+optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
