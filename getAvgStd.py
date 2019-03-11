@@ -44,6 +44,45 @@ train_transform = transforms.Compose([
 # use the same transform for the validation data
 valid_transform = train_transform
 
+from torch.utils import data
+
+class Dataset(data.Dataset):
+  'Characterizes a dataset for PyTorch'
+  def __init__(self, dataframe, path, transform): #used to be passed: list_IDs, labels, 
+        'Initialization'
+#         self.labels = labels
+#         self.list_IDs = list_IDs
+
+        self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
+        self.labels = dataframe.iloc[:,1:].values.reshape(-1)
+        print("shape of IDs: {}".format(self.list_IDs.shape))
+        print("shape of labels: {}".format(self.labels.shape))
+        self.path = path
+        self.transform = transform
+
+  def __len__(self):
+        'Denotes the total number of samples'
+        return len(self.list_IDs)
+
+  def __getitem__(self, index):
+        'Generates one sample of data'
+        # Select sample
+        ID = self.list_IDs[index]
+
+        # Load data and get label
+#         X = torch.load('data/' + ID + '.pt')
+        # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
+        X = Image.open(self.path + ID + '.jpg')
+
+#         y = self.labels[ID] ID??
+        y = self.labels[index]
+    
+        if self.transform:
+            X = self.transform(X)
+
+        return X, y
+
+
 dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
 
 train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
@@ -96,14 +135,16 @@ Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=
 
 count = 0
 for batch, targets in train_loader_imu1:
-    if count > 1:
-        break
+    # if count > 1:
+    #     break
     mean = batch.mean()
+    print("mean = {}".format(mean))
     std_dev = batch.std()
+    print("mean = {}".format(std_dev))
     count += 1
 
 
-print(mean) # 0.9671
-print(std_dev) # 0.0596
+# print(mean) # 0.9671
+# print(std_dev) # 0.0596
 # print("mean = ".format(mean))
 # print("std_dev = ".format(std_dev))
