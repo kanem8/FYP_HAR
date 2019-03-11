@@ -410,7 +410,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         y_pred_train = []
 
         # for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3, train_loader_HR):
-        for batch_imu1, batch_imu2, batch_imu3, batch_HR in train_loader:
+        for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in train_loader:
 
             # # Move the training data to the GPU
             # batch = batch.to(device)
@@ -480,7 +480,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         # no_grad to save memory
         with torch.no_grad():
 
-            for batch_imu1, batch_imu2, batch_imu3, batch_HR in Validation_loader:
+            for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in Validation_loader:
 
                 # # Move the training data to the GPU
                 # batch = batch.to(device)
