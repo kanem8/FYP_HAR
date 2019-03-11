@@ -223,16 +223,16 @@ train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
 
 
 training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform_imu)
-train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=False)
+train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
 
 training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
-train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=False)
+train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
 
 training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
-train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=False)
+train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
 
 training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
-train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=False)
+train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
 
 
 #Validation data:
