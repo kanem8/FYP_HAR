@@ -91,44 +91,47 @@ class Single_Branch(nn.Module):
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
-            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
+            # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer2 = nn.Sequential(
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool),
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
             # nn.Linear(21*72*C, 512),
-            nn.Linear(21*72*C, 128),
+            # nn.Linear(21*72*C, 128),
             # nn.Linear(4*100*C, 512),
+            nn.Linear(19*100*C, 512),
+
             nn.ReLU(),
             nn.Dropout(0.5)
         )
         self.fc2 = nn.Sequential(
-            nn.Linear(128, 128),
+            nn.Linear(512, 512),
             nn.ReLU()
         )
         self.fc3 = nn.Sequential(
-            nn.Linear(128, num_classes)
+            nn.Linear(512, num_classes)
         )
         
     def forward(self, X_imu1):
         out = self.layer1(X_imu1)
         out = self.layer2(out)
-        out = out.reshape(-1, 21*72*C) # out = out.reshape(out.size(0), -1)
+        # out = out.reshape(-1, 21*72*C) # out = out.reshape(out.size(0), -1)
         # out = out.reshape(-1, 4*100*C) 
+        out = out.reshape(-1, 19*100*C) # out = out.reshape(out.size(0), -1)
         out = self.fc1(out)
         out = self.fc2(out)
         out = self.fc3(out)
@@ -138,8 +141,9 @@ class Single_Branch(nn.Module):
 # transform for the training data
 train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
+    # transforms.Resize((72, 108)), # original size: (288, 432), resized to 25% of original size
     # transforms.Resize((100, 40)), # original size: (288, 432)
+    transforms.Resize((40, 100)), # original size: (288, 432)
     transforms.ToTensor(),
     transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
 ])
