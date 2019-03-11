@@ -91,19 +91,20 @@ class Single_Branch(nn.Module):
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75)
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer2 = nn.Sequential(
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool),
             nn.Dropout(0.5)
