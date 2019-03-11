@@ -110,20 +110,8 @@ class CNN_IMU_HR(nn.Module):
         return combined # logits
 
 
-# # transform for the training data
-# train_transform = transforms.Compose([
-#     transforms.Grayscale(num_output_channels=1),
-#     transforms.Resize((72, 108)),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.9671], [0.0596])
-#     # transforms.Normalize([0.1307], [0.3081])
-# ])
-# 
-# # use the same transform for the validation data
-# valid_transform = train_transform
-
 # transform for the training data
-train_transform_imu = transforms.Compose([
+train_transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
@@ -131,32 +119,81 @@ train_transform_imu = transforms.Compose([
     # transforms.Normalize([0.1307], [0.3081])
 ])
 
-train_transform_HR = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.9959], [0.0218])
-    # transforms.Normalize([0.1307], [0.3081])
-])
+# use the same transform for the validation data
+valid_transform = train_transform
 
-valid_transform_imu = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.959], [0.062])
-    # transforms.Normalize([0.1307], [0.3081])
-])
+# # transform for the training data
+# train_transform_imu = transforms.Compose([
+#     transforms.Grayscale(num_output_channels=1),
+#     transforms.Resize((72, 108)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.9671], [0.0596])
+#     # transforms.Normalize([0.1307], [0.3081])
+# ])
 
-valid_transform_HR = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.9962], [0.0214])
-    # transforms.Normalize([0.1307], [0.3081])
-])
+# train_transform_HR = transforms.Compose([
+#     transforms.Grayscale(num_output_channels=1),
+#     transforms.Resize((72, 108)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.9959], [0.0218])
+#     # transforms.Normalize([0.1307], [0.3081])
+# ])
+
+# valid_transform_imu = transforms.Compose([
+#     transforms.Grayscale(num_output_channels=1),
+#     transforms.Resize((72, 108)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.959], [0.062])
+#     # transforms.Normalize([0.1307], [0.3081])
+# ])
+
+# valid_transform_HR = transforms.Compose([
+#     transforms.Grayscale(num_output_channels=1),
+#     transforms.Resize((72, 108)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.9962], [0.0214])
+#     # transforms.Normalize([0.1307], [0.3081])
+# ])
 
 
 from torch.utils import data
+
+# class Dataset(data.Dataset):
+#   'Characterizes a dataset for PyTorch'
+#   def __init__(self, dataframe, path, transform): #used to be passed: list_IDs, labels, 
+#         'Initialization'
+# #         self.labels = labels
+# #         self.list_IDs = list_IDs
+
+#         self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
+#         self.labels = dataframe.iloc[:,1:].values.reshape(-1)
+#         print("shape of IDs: {}".format(self.list_IDs.shape))
+#         print("shape of labels: {}".format(self.labels.shape))
+#         self.path = path
+#         self.transform = transform
+
+#   def __len__(self):
+#         'Denotes the total number of samples'
+#         return len(self.list_IDs)
+
+#   def __getitem__(self, index):
+#         'Generates one sample of data'
+#         # Select sample
+#         ID = self.list_IDs[index]
+
+#         # Load data and get label
+# #         X = torch.load('data/' + ID + '.pt')
+#         # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
+#         X = Image.open(self.path + ID + '.jpg')
+
+# #         y = self.labels[ID] ID??
+#         y = self.labels[index]
+    
+#         if self.transform:
+#             X = self.transform(X)
+
+#         return X, y
+
 
 class Dataset(data.Dataset):
   'Characterizes a dataset for PyTorch'
@@ -169,7 +206,13 @@ class Dataset(data.Dataset):
         self.labels = dataframe.iloc[:,1:].values.reshape(-1)
         print("shape of IDs: {}".format(self.list_IDs.shape))
         print("shape of labels: {}".format(self.labels.shape))
-        self.path = path
+
+        self.path_imu1 = path + 'IMU_1Hand/'
+        self.path_imu2 = path + 'IMU_2Chest/'
+        self.path_imu3 = path + 'IMU_3Ankle/'
+        self.path_HR = path + 'HR_Sensor/'
+
+        # self.path = path
         self.transform = transform
 
   def __len__(self):
@@ -184,15 +227,23 @@ class Dataset(data.Dataset):
         # Load data and get label
 #         X = torch.load('data/' + ID + '.pt')
         # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
-        X = Image.open(self.path + ID + '.jpg')
+        plot_imu1 = Image.open(self.path_imu1 + ID + '.jpg')
+        plot_imu2 = Image.open(self.path_imu2 + ID + '.jpg')
+        plot_imu3 = Image.open(self.path_imu3 + ID + '.jpg')
+        plot_HR = Image.open(self.path_HR + ID + '.jpg')
+
 
 #         y = self.labels[ID] ID??
         y = self.labels[index]
     
         if self.transform:
-            X = self.transform(X)
+            plot_imu1 = self.transform(plot_imu1)
+            plot_imu2 = self.transform(plot_imu2)
+            plot_imu3 = self.transform(plot_imu3)
+            plot_HR = self.transform(plot_HR)
 
-        return X, y
+
+        return plot_imu1, plot_imu2, plot_imu3, plot_HR, y
 
 
 
@@ -202,64 +253,49 @@ class Dataset(data.Dataset):
 # device = torch.device("cuda" if use_cuda else "cpu")
 # cudnn.benchmark = True # optimal set of algorithms
 
-# Define dataloader parameters in dict
-dlparams = {'batch_size': 50,
-          'shuffle': True,
-          'num_workers': 4} #how many?
-epochs = 12
-
-# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Train/figure_labels.csv', ',', header=0)
-
-# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/'
-# train_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_2Chest/'
-# train_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Train/IMU_3Ankle/'
-
 dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
 
-train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
-train_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_2Chest/'
-train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
-train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
+# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
+# train_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_2Chest/'
+# train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
+# train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
 
+train_path = '/data/mark/NetworkDatasets/pamap2_HR/Train/'
 
-training_set_imu1 = Dataset(dataset_train, train_path_imu1, train_transform_imu)
-train_loader_imu1 = DataLoader(training_set_imu1, batch_size=50, num_workers=4, shuffle=True)
+training_set = Dataset(dataset_train, train_path, train_transform)
+train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
-train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
+# training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
+# train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
-train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
+# training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
+# train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
 
-training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
-train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
+# training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
+# train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
 
-
-#Validation data:
-# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2/Validation/figure_labels.csv', ',', header=0)
-
-# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_1Hand/'
-# Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_2Chest/'
-# Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2/Validation/IMU_3Ankle/'
 
 dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Validation/figure_labels.csv', ',', header=0)
 
-Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_1Hand/'
-Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Chest/'
-Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
-Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
+# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_1Hand/'
+# Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Chest/'
+# Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
+# Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
 
-Validation_set_imu1 = Dataset(dataset_validation, Validation_path_imu1, valid_transform_imu)
-Validation_loader_imu1 = DataLoader(Validation_set_imu1, batch_size=50, num_workers=4, shuffle=False)
+Validation_path = '/data/mark/NetworkDatasets/pamap2_HR/Validation/'
 
-Validation_set_imu2 = Dataset(dataset_validation, Validation_path_imu2, valid_transform_imu)
-Validation_loader_imu2 = DataLoader(Validation_set_imu2, batch_size=50, num_workers=4, shuffle=False)
 
-Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform_imu)
-Validation_loader_imu3 = DataLoader(Validation_set_imu3, batch_size=50, num_workers=4, shuffle=False)
+Validation_set = Dataset(dataset_validation, Validation_path, valid_transform)
+Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 
-Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform_HR)
-Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
+# Validation_set_imu2 = Dataset(dataset_validation, Validation_path_imu2, valid_transform_imu)
+# Validation_loader_imu2 = DataLoader(Validation_set_imu2, batch_size=50, num_workers=4, shuffle=False)
+
+# Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform_imu)
+# Validation_loader_imu3 = DataLoader(Validation_set_imu3, batch_size=50, num_workers=4, shuffle=False)
+
+# Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform_HR)
+# Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
 
 
 
@@ -373,25 +409,34 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         y_pred_train = []
 
-        for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3, train_loader_HR):
-            # Move the training data to the GPU
-            batch = batch.to(device)
-            targets = targets.to(device)
-            batch2 = batch2.to(device)
-            targets2 = targets2.to(device)            
-            batch3 = batch3.to(device)
-            targets3 = targets3.to(device)   
-            batch4 = batch4.to(device)
-            targets4 = targets4.to(device)           
+        # for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3, train_loader_HR):
+        for batch_imu1, batch_imu2, batch_imu3, batch_HR in train_loader:
 
-            import pdb; pdb.set_trace()
+            # # Move the training data to the GPU
+            # batch = batch.to(device)
+            # targets = targets.to(device)
+            # batch2 = batch2.to(device)
+            # targets2 = targets2.to(device)            
+            # batch3 = batch3.to(device)
+            # targets3 = targets3.to(device)   
+            # batch4 = batch4.to(device)
+            # targets4 = targets4.to(device)    
+            # 
+            # Move the training data to the GPU
+            batch_imu1 = batch_imu1.to(device)
+            batch_imu2 = batch_imu2.to(device)
+            batch_imu3 = batch_imu3.to(device)
+            batch_HR = batch_HR.to(device)
+            targets = targets.to(device)
+
+            # import pdb; pdb.set_trace()
 
 
             # clear previous gradient computation
             optimizer.zero_grad()
 
             # forward propagation
-            predictions = model(batch, batch2, batch3, batch4)
+            predictions = model(batch_imu1, batch_imu2, batch_imu3, batch_HR)
 
             # calculate the loss
             loss = criterion(predictions, targets)
@@ -435,20 +480,25 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         # no_grad to save memory
         with torch.no_grad():
 
-            for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(Validation_loader_imu1, Validation_loader_imu2, Validation_loader_imu3, Validation_loader_HR):
+            for batch_imu1, batch_imu2, batch_imu3, batch_HR in Validation_loader:
 
-                # Move the training data to the GPU
-                batch = batch.to(device)
+                # # Move the training data to the GPU
+                # batch = batch.to(device)
+                # targets = targets.to(device)
+                # batch2 = batch2.to(device)
+                # targets2 = targets2.to(device)            
+                # batch3 = batch3.to(device)
+                # targets3 = targets3.to(device)  
+                # batch4 = batch4.to(device)
+                # targets4 = targets4.to(device)  
+                batch_imu1 = batch_imu1.to(device)
+                batch_imu2 = batch_imu2.to(device)
+                batch_imu3 = batch_imu3.to(device)
+                batch_HR = batch_HR.to(device)
                 targets = targets.to(device)
-                batch2 = batch2.to(device)
-                targets2 = targets2.to(device)            
-                batch3 = batch3.to(device)
-                targets3 = targets3.to(device)  
-                batch4 = batch4.to(device)
-                targets4 = targets4.to(device)  
 
                 # forward propagation
-                predictions = model(batch, batch2, batch3, batch4)
+                predictions = model(batch_imu1, batch_imu2, batch_imu3, batch_HR)
 
                 # calculate the loss
                 loss = criterion(predictions, targets)
