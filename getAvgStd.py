@@ -38,7 +38,7 @@ train_transform = transforms.Compose([
     # transforms.Resize((100, 40)), # original size: (288, 432)
     # transforms.Resize((40, 100)), # original size: (288, 432)
     transforms.ToTensor(),
-    # transforms.Normalize([0.9671], [0.0596]) # unsure how to normalize the tensor correctly
+    # transforms.Normalize([0.968], [0.0596]) # unsure how to normalize the tensor correctly
 ])
 
 # use the same transform for the validation data
@@ -134,7 +134,7 @@ Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=
 
 
 count = 0
-for batch, targets in train_loader_imu1:
+for batch, targets in train_loader_imu2:
     if count > 10:
         break
     mean = batch.mean()
@@ -143,6 +143,71 @@ for batch, targets in train_loader_imu1:
     print("std dev = {}".format(std_dev))
     count += 1
 
+print()
+count2 = 0
+for batch, targets in train_loader_imu3:
+    if count2 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count2 += 1
+
+print()
+count3 = 0
+for batch, targets in train_loader_HR:
+    if count3 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count3 += 1
+
+print()
+count4 = 0
+for batch, targets in Validation_loader_imu1:
+    if count4 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count4 += 1
+
+print()
+count5 = 0
+for batch, targets in Validation_loader_imu2:
+    if count5 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count5 += 1
+
+print()
+count6 = 0
+for batch, targets in Validation_loader_imu3:
+    if count6 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count6 += 1
+
+print()
+count7 = 0
+for batch, targets in Validation_loader_HR:
+    if count7 > 10:
+        break
+    mean = batch.mean()
+    print("mean = {}".format(mean))
+    std_dev = batch.std()
+    print("std dev = {}".format(std_dev))
+    count7 += 1
 
 # print(mean) # 0.9671
 # print(std_dev) # 0.0596
