@@ -541,4 +541,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
