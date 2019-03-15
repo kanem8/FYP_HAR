@@ -51,21 +51,21 @@ class CNN_IMU_HR(nn.Module):
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
-            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
+            # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer2 = nn.Sequential(
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            # nn.BatchNorm2d(C),
+            nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool),
             nn.Dropout(0.5)
@@ -356,8 +356,8 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
-# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+# optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
