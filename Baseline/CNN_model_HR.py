@@ -182,6 +182,7 @@ class Dataset(data.Dataset):
         self.transform = transform
         self.window_size = window_size
         self.frame_shift = frame_shift
+        self.img_labels = np.empty((0))
 
         with open(pickle_file, 'rb') as f:
             [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
@@ -211,6 +212,8 @@ class Dataset(data.Dataset):
             X = X.unsqueeze(dim=0)
             # X = self.transform(X)
         
+        self.img_labels = np.append(self.img_labels, int(y))
+
 
         return X, y
 
@@ -478,12 +481,12 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set.labels)
+        valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/CNNDataset-{:03d}.pkl'.format(epoch)
+        checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
     return train_losses, valid_losses, y_pred
