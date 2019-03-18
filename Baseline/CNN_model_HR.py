@@ -202,9 +202,11 @@ class Dataset(data.Dataset):
         self.img_labels = np.zeros((images), dtype=np.int64)
 
         indexes = list(range(0, images, self.frame_shift))
+        ctr = 0
         for j in indexes:
             l = int(self.labels[j+int(self.window_size/2)])
-            self.img_labels[j] = l
+            self.img_labels[ctr] = l
+            ctr += 1
 
         print("shape of data: {}".format(self.data.shape))
         print("shape of labels: {}".format(self.labels.shape))
