@@ -183,7 +183,7 @@ class Dataset(data.Dataset):
         self.window_size = window_size
         self.frame_shift = frame_shift
         # self.img_labels = np.empty((0))
-        self.img_labels
+
 
         with open(pickle_file, 'rb') as f:
             [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
@@ -194,6 +194,10 @@ class Dataset(data.Dataset):
         else:
             self.data = X_val.transpose()
             self.labels = y_val
+
+        
+        samples = int((len(self.labels) - self.window_size)/(self.frame_shift))
+        self.img_labels = np.empty((samples), dtype=np.int8)
 
         print("shape of data: {}".format(self.data.shape))
         print("shape of labels: {}".format(self.labels.shape))
@@ -213,7 +217,9 @@ class Dataset(data.Dataset):
             X = X.unsqueeze(dim=0)
             # X = self.transform(X)
         
-        self.img_labels = np.append(self.img_labels, int(y))
+        # self.img_labels = np.append(self.img_labels, int(y))
+        self.img_labels[index] = y
+
 
 
         return X, y
