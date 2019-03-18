@@ -727,7 +727,7 @@ def get_args():
     # For GPU:
     dataset = '/data/mark/RawDatasets/'
 
-    target_filename = '/data/mark/NetworkDatasets/pamap2/pamap2.data'
+    target_filename = '/data/mark/NetworkDatasets/pamap2/baseline/pamap2.data'
 
     # Return all variable values
 
@@ -764,47 +764,47 @@ if __name__ == '__main__':
     X_train, y_train, X_val, y_val, X_test, y_test = generate_data(pamap2_dataset, output)
 
     
-        #get rid of +-6g acceleration columns as paper says not use them 
+    #     #get rid of +-6g acceleration columns as paper says not use them 
 
-    features_delete = np.arange(5, 8) 
+    # features_delete = np.arange(5, 8) 
 
-    features_delete = np.concatenate([features_delete, np.arange(18, 21)])
+    # features_delete = np.concatenate([features_delete, np.arange(18, 21)])
 
-    features_delete = np.concatenate([features_delete, np.arange(31, 34)])
+    # features_delete = np.concatenate([features_delete, np.arange(31, 34)])
 
     
 
-    X_train = np.delete(X_train, features_delete, 1) # removing along x axis (columns) this time
-    X_val = np.delete(X_val, features_delete, 1) # removing along x axis (columns) this time
-    X_test = np.delete(X_test, features_delete, 1) # removing along x axis (columns) this time
+    # X_train = np.delete(X_train, features_delete, 1) # removing along x axis (columns) this time
+    # X_val = np.delete(X_val, features_delete, 1) # removing along x axis (columns) this time
+    # X_test = np.delete(X_test, features_delete, 1) # removing along x axis (columns) this time
     
-    print("New: X_train shape {}".format(X_train.shape))
-    print("New: X_val shape {}".format(X_val.shape))
-    print("New: X_test shape {}".format(X_test.shape))
+    # print("New: X_train shape {}".format(X_train.shape))
+    # print("New: X_val shape {}".format(X_val.shape))
+    # print("New: X_test shape {}".format(X_test.shape))
     
-    T = 100
-    s = 22
+    # T = 100
+    # s = 22
     
-    # to generate individual IMU plots
-    # ss.sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2/Train/')
-    # ss.sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2/Test/')
-    # ss.sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2/Validation/')
+    # # to generate individual IMU plots
+    # # ss.sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2/Train/')
+    # # ss.sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2/Test/')
+    # # ss.sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2/Validation/')
 
-    # to generate individual IMU plots with heart rate sensor
-    ss.sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Train/')
-    ss.sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Test/')
-    ss.sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Validation/')
+    # # to generate individual IMU plots with heart rate sensor
+    # ss.sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Train/')
+    # ss.sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Test/')
+    # ss.sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_HR/Validation/')
 
-    # # to generate plots of IMUs stored together
-    # ss.cnn_sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Train/')
-    # ss.cnn_sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Test/')
-    # ss.cnn_sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Validation/')
+    # # # to generate plots of IMUs stored together
+    # # ss.cnn_sliding_window(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Train/')
+    # # ss.cnn_sliding_window(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Test/')
+    # # ss.cnn_sliding_window(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn/Validation/')
 
 
-    # # to generate plots of IMUs stored together with heart rate sensor
-    # ss.cnn_sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/')
-    # ss.cnn_sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Test/')
-    # ss.cnn_sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/')
+    # # # to generate plots of IMUs stored together with heart rate sensor
+    # # ss.cnn_sliding_window_HR(X_train, y_train, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Train/')
+    # # ss.cnn_sliding_window_HR(X_test, y_test, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Test/')
+    # # ss.cnn_sliding_window_HR(X_val, y_val, T, s, '/data/mark/NetworkDatasets/pamap2_cnn_HR/Validation/')
 
     
 
