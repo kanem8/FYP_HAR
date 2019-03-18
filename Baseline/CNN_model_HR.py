@@ -182,7 +182,7 @@ class Dataset(data.Dataset):
         self.transform = transform
         self.window_size = window_size
         self.frame_shift = frame_shift
-        self.img_labels = np.empty((0))
+        # self.img_labels = np.empty((0))
 
         with open(pickle_file, 'rb') as f:
             [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
