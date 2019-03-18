@@ -154,13 +154,15 @@ valid_transform = train_transform
 
 def window(i, x_data, y_label, window_size):
     X = x_data[:,i:(i+window_size)]
+    y = int(y_label[i+int(window_size/2)])
 
-    if (i+window_size) > y_label.shape[0]:
-        print("i = {}".format(i))
-        print("y_label.shape[0] = {}".format(y_label.shape[0]))
-        y = int(y_label[i])
-    else:
-        y = int(y_label[i+int(window_size/2)])
+
+    # if (i+window_size) > y_label.shape[0]:
+    #     # print("i = {}".format(i))
+    #     # print("y_label.shape[0] = {}".format(y_label.shape[0]))
+    #     y = int(y_label[i])
+    # else:
+    #     y = int(y_label[i+int(window_size/2)])
 
 
     return X, y
@@ -196,7 +198,7 @@ class Dataset(data.Dataset):
 
   def __len__(self):
         'Denotes the total number of samples'
-        return int((len(self.labels))/(self.frame_shift))
+        return int((len(self.labels) - self.window_size)/(self.frame_shift))
 
   def __getitem__(self, index):
         'Generates one sample of data'
