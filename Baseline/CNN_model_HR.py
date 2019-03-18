@@ -203,9 +203,9 @@ class Dataset(data.Dataset):
     
         if self.transform:
             X = torch.from_numpy(X).float()
+            X = X.unsqueeze(dim=0)
             # X = self.transform(X)
         
-
 
         return X, y
 
