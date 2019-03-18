@@ -202,7 +202,10 @@ class Dataset(data.Dataset):
         X, y = window(i, self.data, self.labels, self.window_size)
     
         if self.transform:
-            X = self.transform(X)
+            X = torch.from_numpy(X).float()
+            # X = self.transform(X)
+        
+
 
         return X, y
 
