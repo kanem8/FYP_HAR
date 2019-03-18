@@ -218,7 +218,7 @@ class Dataset(data.Dataset):
             X = X.unsqueeze(dim=0)
             # X = self.transform(X)
         
-        self.img_labels.append(y)
+        self.img_labels = self.img_labels.append(y)
 
         # self.img_labels = np.append(self.img_labels, y)
         # self.img_labels[index] = y
