@@ -201,8 +201,8 @@ class Dataset(data.Dataset):
         i = index*(self.frame_shift)
         X, y = window(i, self.data, self.labels, self.window_size)
     
-        if self.transform:
-            X = self.transform(X)
+        # if self.transform:
+        #     X = self.transform(X)
 
         return X, y
 
