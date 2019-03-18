@@ -112,7 +112,7 @@ class Single_Branch(nn.Module):
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
-            nn.Linear(19*100*C, 512),
+            nn.Linear(C*40*19, 512),
             # nn.Linear(4*100*C, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
@@ -128,10 +128,10 @@ class Single_Branch(nn.Module):
     def forward(self, X_imu1):
         out = self.layer1(X_imu1)
         out = self.layer2(out)
-        print(out.shape)
+        # print(out.shape)
         # out = out.reshape(out.size(0), -1)
-        out = out.reshape(-1, 19*100*C) # out = out.reshape(out.size(0), -1)
-        print(out.shape)
+        out = out.reshape(-1, C*40*19) # out = out.reshape(out.size(0), -1)
+        # print(out.shape)
         # out = out.reshape(-1, 4*100*C) 
         out = self.fc1(out)
         out = self.fc2(out)
