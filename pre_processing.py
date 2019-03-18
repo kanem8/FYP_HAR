@@ -486,7 +486,7 @@ def process_dataset_file(data):
 
     # Select correct columns
 
-    data_x = select_columns_opp(data_x)
+    data_x = select_columns_opp(data_x) # removes the orientation data, now have 40 columns
 
     
 
@@ -727,7 +727,7 @@ def get_args():
     # For GPU:
     dataset = '/data/mark/RawDatasets/'
 
-    target_filename = '/data/mark/NetworkDatasets/pamap2/baseline/pamap2.data'
+    target_filename = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
     # Return all variable values
 
