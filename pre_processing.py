@@ -689,7 +689,7 @@ def generate_data(dataset, target_filename):
 
 
 
-    print("Final datasets with size: | train {0} | test {1} | ".format(X_train.shape,X_test.shape))
+    print("Final datasets with size: | train {0} | Val {1} | test {2} | ".format(X_train.shape,X_val.shape,X_test.shape))
 
 
     # np.savetxt("D:/Fourth Year/FYP/PAMAP2_Dataset/Processed_Data/test_target.dat", y_test)
