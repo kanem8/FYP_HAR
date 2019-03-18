@@ -167,7 +167,7 @@ from torch.utils import data
 
 class Dataset(data.Dataset):
   'Characterizes a dataset for PyTorch'
-  def __init__(self, pickle_file, train=True, transform, window_size=100, frame_shift=22): #used to be passed: list_IDs, labels, 
+  def __init__(self, pickle_file, transform, train=True, window_size=100, frame_shift=22): #used to be passed: list_IDs, labels, 
         'Initialization'
 
         self.pickle_file = pickle_file
@@ -222,11 +222,11 @@ epochs = 12
 dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
 # Training data
-training_set = Dataset(dataset_pickle, train=True, train_transform)
+training_set = Dataset(dataset_pickle, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
 
 # Validation data:
-Validation_set = Dataset(dataset_pickle, train=False, valid_transform)
+Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 
 
