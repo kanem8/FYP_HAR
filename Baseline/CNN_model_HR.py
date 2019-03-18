@@ -128,7 +128,10 @@ class Single_Branch(nn.Module):
     def forward(self, X_imu1):
         out = self.layer1(X_imu1)
         out = self.layer2(out)
+        print(out.shape)
+        # out = out.reshape(out.size(0), -1)
         out = out.reshape(-1, 19*100*C) # out = out.reshape(out.size(0), -1)
+        print(out.shape)
         # out = out.reshape(-1, 4*100*C) 
         out = self.fc1(out)
         out = self.fc2(out)
