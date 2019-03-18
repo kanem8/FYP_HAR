@@ -183,7 +183,7 @@ class Dataset(data.Dataset):
         self.window_size = window_size
         self.frame_shift = frame_shift
         # self.img_labels = np.empty((0))
-        self.img_labels = []
+        self.img_labels = np.array()
 
 
         with open(pickle_file, 'rb') as f:
