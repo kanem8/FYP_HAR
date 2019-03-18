@@ -153,6 +153,8 @@ def window(i, x_data, y_label, window_size):
     X = x_data[:,i:(i+window_size)]
 
     if i+window_size > y_label.shape[0]:
+        print("i = {}".format(i))
+        print("y_label.shape[0] = {}".format(y_label.shape[0]))
         y = int(y_label[i])
     else:
         y = int(y_label[i+int(window_size/2)])
