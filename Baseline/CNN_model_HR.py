@@ -244,10 +244,13 @@ dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
+print(training_set.img_labels[0:10])
 
 # Validation data:
 Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
+print(Validation_set.img_labels[0:10])
+
 
 
 
@@ -499,4 +502,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=1)
