@@ -184,6 +184,8 @@ class Dataset(data.Dataset):
         self.frame_shift = frame_shift
         # self.img_labels = np.empty((0))
         # self.img_labels = np.array()
+        # self.img_labels = []
+
 
 
         with open(pickle_file, 'rb') as f:
@@ -196,9 +198,13 @@ class Dataset(data.Dataset):
             self.data = X_val.transpose()
             self.labels = y_val
 
-        
-        samples = int((len(self.labels) - self.window_size)/(self.frame_shift))
-        self.img_labels = np.zeros((samples), dtype=np.int64)
+        images = int((len(self.labels) - self.window_size)/(self.frame_shift))
+        self.img_labels = np.zeros((images), dtype=np.int64)
+
+        indexes = list(range(0, images, self.frame_shift))
+        for j in indexes:
+            l = int(self.labels[j+int(self.window_size/2)])
+            self.img_labels[j] = l
 
         print("shape of data: {}".format(self.data.shape))
         print("shape of labels: {}".format(self.labels.shape))
@@ -221,7 +227,7 @@ class Dataset(data.Dataset):
         # self.img_labels = self.img_labels.append(y)
 
         # self.img_labels = np.append(self.img_labels, y)
-        self.img_labels[index] = y
+        # self.img_labels[index] = y
 
 
 
