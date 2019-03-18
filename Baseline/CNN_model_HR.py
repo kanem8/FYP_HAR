@@ -197,7 +197,7 @@ class Dataset(data.Dataset):
 
         
         samples = int((len(self.labels) - self.window_size)/(self.frame_shift))
-        self.img_labels = np.empty((samples), dtype=np.int8)
+        self.img_labels = np.empty((samples), dtype=np.int64)
 
         print("shape of data: {}".format(self.data.shape))
         print("shape of labels: {}".format(self.labels.shape))
