@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 # from itertools import izip
 import csv
+import pickle
 
 print('PyTorch version:', torch.__version__)
 
@@ -51,27 +52,32 @@ class CNN_IMU_HR(nn.Module):
 
         self.layer1 = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
-            # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
-            # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
+            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer2 = nn.Sequential(
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
-            nn.BatchNorm2d(C),
+            # nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool),
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
             nn.Linear(21*72*C, 512),
+            nn.ReLU(),
+            nn.Dropout(0.5)
+        )
+        self.fcHR = nn.Sequential(
+            nn.Linear(C*1*19, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
@@ -86,23 +92,23 @@ class CNN_IMU_HR(nn.Module):
     def forward(self, X_imu1, X_imu2, X_imu3, X_HR):
         out1 = self.layer1(X_imu1)
         out1 = self.layer2(out1)
-        out1 = out1.reshape(-1, 21*72*C)
+        out1 = out1.reshape(-1, C*13*19)
         out1 = self.fc1(out1)
 
         out2 = self.layer1(X_imu2)
         out2 = self.layer2(out2)
-        out2 = out2.reshape(-1, 21*72*C)
+        out2 = out2.reshape(-1, C*13*19)
         out2 = self.fc1(out2)
 
         out3 = self.layer1(X_imu3)
         out3 = self.layer2(out3)
-        out3 = out3.reshape(-1, 21*72*C)
+        out3 = out3.reshape(-1, C*13*19)
         out3 = self.fc1(out3)
 
         out4 = self.layer1(X_HR)
         out4 = self.layer2(out4)
-        out4 = out4.reshape(-1, 21*72*C)
-        out4 = self.fc1(out4)
+        out4 = out4.reshape(-1, C*1*19)
+        out4 = self.fcHR(out4)
 
         combined = torch.cat((out1, out2, out3, out4), dim=1)
 
@@ -114,10 +120,10 @@ class CNN_IMU_HR(nn.Module):
 
 # transform for the training data
 train_transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
-    transforms.Resize((72, 108)),
+    # transforms.Grayscale(num_output_channels=1),
+    # transforms.Resize((72, 108)),
     transforms.ToTensor(),
-    transforms.Normalize([0.9671], [0.0596])
+    # transforms.Normalize([0.9671], [0.0596])
     # transforms.Normalize([0.1307], [0.3081])
 ])
 
@@ -157,149 +163,100 @@ valid_transform = train_transform
 #     # transforms.Normalize([0.1307], [0.3081])
 # ])
 
+def window(i, x_data, y_label, window_size):
+    X = x_data[:,i:(i+window_size)]
+    y = int(y_label[i+int(window_size/2)])
+
+    return X, y
+
 
 from torch.utils import data
 
-# class Dataset(data.Dataset):
-#   'Characterizes a dataset for PyTorch'
-#   def __init__(self, dataframe, path, transform): #used to be passed: list_IDs, labels, 
-#         'Initialization'
-# #         self.labels = labels
-# #         self.list_IDs = list_IDs
-
-#         self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
-#         self.labels = dataframe.iloc[:,1:].values.reshape(-1)
-#         print("shape of IDs: {}".format(self.list_IDs.shape))
-#         print("shape of labels: {}".format(self.labels.shape))
-#         self.path = path
-#         self.transform = transform
-
-#   def __len__(self):
-#         'Denotes the total number of samples'
-#         return len(self.list_IDs)
-
-#   def __getitem__(self, index):
-#         'Generates one sample of data'
-#         # Select sample
-#         ID = self.list_IDs[index]
-
-#         # Load data and get label
-# #         X = torch.load('data/' + ID + '.pt')
-#         # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
-#         X = Image.open(self.path + ID + '.jpg')
-
-# #         y = self.labels[ID] ID??
-#         y = self.labels[index]
-    
-#         if self.transform:
-#             X = self.transform(X)
-
-#         return X, y
-
-
 class Dataset(data.Dataset):
   'Characterizes a dataset for PyTorch'
-  def __init__(self, dataframe, path, transform): #used to be passed: list_IDs, labels, 
+  def __init__(self, pickle_file, transform, train=True, window_size=100, frame_shift=22): #used to be passed: list_IDs, labels, 
         'Initialization'
-#         self.labels = labels
-#         self.list_IDs = list_IDs
 
-        self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
-        self.labels = dataframe.iloc[:,1:].values.reshape(-1)
-        print("shape of IDs: {}".format(self.list_IDs.shape))
-        print("shape of labels: {}".format(self.labels.shape))
-
-        self.path_imu1 = path + 'IMU_1Hand/'
-        self.path_imu2 = path + 'IMU_2Chest/'
-        self.path_imu3 = path + 'IMU_3Ankle/'
-        self.path_HR = path + 'HR_Sensor/'
-
-        # self.path = path
+        self.pickle_file = pickle_file
+        self.train = train
         self.transform = transform
+        self.window_size = window_size
+        self.frame_shift = frame_shift
+        # self.img_labels = np.empty((0))
+        # self.img_labels = np.array()
+        # self.img_labels = []
+
+
+
+        with open(pickle_file, 'rb') as f:
+            [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
+
+        if self.train:
+            self.data = X_train.transpose() # transpose so that sensor channels are rows and samples are columns, can now apply sliding window
+            self.labels = y_train
+        else:
+            self.data = X_val.transpose()
+            self.labels = y_val
+
+        images = int((len(self.labels) - self.window_size)/(self.frame_shift))
+        self.img_labels = np.zeros((images), dtype=np.int64)
+
+        indexes = list(range(0, images, self.frame_shift))
+        ctr = 0
+        for j in indexes:
+            l = int(self.labels[j+int(self.window_size/2)])
+            self.img_labels[ctr] = l
+            ctr += 1
+
+        print("shape of data: {}".format(self.data.shape))
+        print("shape of labels: {}".format(self.labels.shape))
 
   def __len__(self):
         'Denotes the total number of samples'
-        return len(self.list_IDs)
+        return int((len(self.labels) - self.window_size)/(self.frame_shift))
 
   def __getitem__(self, index):
         'Generates one sample of data'
-        # Select sample
-        ID = self.list_IDs[index]
-
-        # Load data and get label
-#         X = torch.load('data/' + ID + '.pt')
-        # path should be something like /data/mark/NetworkDatasets/pamap2/Train/IMU_1Hand/
-        plot_imu1 = Image.open(self.path_imu1 + ID + '.jpg')
-        plot_imu2 = Image.open(self.path_imu2 + ID + '.jpg')
-        plot_imu3 = Image.open(self.path_imu3 + ID + '.jpg')
-        plot_HR = Image.open(self.path_HR + ID + '.jpg')
+        
+        i = index*(self.frame_shift)
+        X_HR, y = window(i, self.data[0:1,:], self.labels, self.window_size)
+        X_imu1, y = window(i, self.data[1:14,:], self.labels, self.window_size)
+        X_imu2, y = window(i, self.data[14:27,:], self.labels, self.window_size)
+        X_imu3, y = window(i, self.data[27:40,:], self.labels, self.window_size)
 
 
-#         y = self.labels[ID] ID??
-        y = self.labels[index]
+
     
         if self.transform:
-            plot_imu1 = self.transform(plot_imu1)
-            plot_imu2 = self.transform(plot_imu2)
-            plot_imu3 = self.transform(plot_imu3)
-            plot_HR = self.transform(plot_HR)
+            X_HR = torch.from_numpy(X_HR).float()
+            X_HR = X_HR.unsqueeze(dim=0)
+            X_imu1 = torch.from_numpy(X_imu1).float()
+            X_imu1 = X_imu1.unsqueeze(dim=0)
+            X_imu2 = torch.from_numpy(X_imu2).float()
+            X_imu2 = X_imu2.unsqueeze(dim=0)
+            X_imu3 = torch.from_numpy(X_imu3).float()
+            X_imu3 = X_imu3.unsqueeze(dim=0)
+            # X = self.transform(X)
+        
+        # self.img_labels = self.img_labels.append(y)
 
+        # self.img_labels = np.append(self.img_labels, y)
+        # self.img_labels[index] = y
 
-        return plot_imu1, plot_imu2, plot_imu3, plot_HR, y
+        return X_HR, X_imu1, X_imu2, X_imu3, y
 
+dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
-
-# CUDA for PyTorch
-# use_cuda = torch.cuda.is_available()
-# device = torch.device("cpu")
-# device = torch.device("cuda" if use_cuda else "cpu")
-# cudnn.benchmark = True # optimal set of algorithms
-
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
-
-# train_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_1Hand/'
-# train_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_2Chest/'
-# train_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Train/IMU_3Ankle/'
-# train_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Train/HR_Sensor/'
-
-train_path = '/data/mark/NetworkDatasets/pamap2_HR/Train/'
-
-training_set = Dataset(dataset_train, train_path, train_transform)
+# Training data
+training_set = Dataset(dataset_pickle, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
+print(training_set.img_labels[0:10])
 
-# training_set_imu2 = Dataset(dataset_train, train_path_imu2, train_transform_imu)
-# train_loader_imu2 = DataLoader(training_set_imu2, batch_size=50, num_workers=4, shuffle=True)
-
-# training_set_imu3 = Dataset(dataset_train, train_path_imu3, train_transform_imu)
-# train_loader_imu3 = DataLoader(training_set_imu3, batch_size=50, num_workers=4, shuffle=True)
-
-# training_set_HR = Dataset(dataset_train, train_path_HR, train_transform_HR)
-# train_loader_HR = DataLoader(training_set_HR, batch_size=50, num_workers=4, shuffle=True)
-
-
-dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Validation/figure_labels.csv', ',', header=0)
-
-# Validation_path_imu1 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_1Hand/'
-# Validation_path_imu2 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_2Chest/'
-# Validation_path_imu3 = '/data/mark/NetworkDatasets/pamap2_HR/Validation/IMU_3Ankle/'
-# Validation_path_HR = '/data/mark/NetworkDatasets/pamap2_HR/Validation/HR_Sensor/'
-
-Validation_path = '/data/mark/NetworkDatasets/pamap2_HR/Validation/'
-
-
-Validation_set = Dataset(dataset_validation, Validation_path, valid_transform)
+# Validation data:
+Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
-
-# Validation_set_imu2 = Dataset(dataset_validation, Validation_path_imu2, valid_transform_imu)
-# Validation_loader_imu2 = DataLoader(Validation_set_imu2, batch_size=50, num_workers=4, shuffle=False)
-
-# Validation_set_imu3 = Dataset(dataset_validation, Validation_path_imu3, valid_transform_imu)
-# Validation_loader_imu3 = DataLoader(Validation_set_imu3, batch_size=50, num_workers=4, shuffle=False)
-
-# Validation_set_HR = Dataset(dataset_validation, Validation_path_HR, valid_transform_HR)
-# Validation_loader_HR = DataLoader(Validation_set_HR, batch_size=50, num_workers=4, shuffle=False)
-
-
+print(Validation_set.img_labels[0:10])
+dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
 
 
 class AverageBase(object):
@@ -356,8 +313,8 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-# optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
+# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
@@ -462,7 +419,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         train_losses.append(train_loss.value)
 
         y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
-        train_labels_tensor = torch.from_numpy(training_set.labels)
+        train_labels_tensor = torch.from_numpy(training_set.img_labels)
         accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
         print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
@@ -530,12 +487,12 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set.labels)
+        valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
         # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/CNN_IMU_HRDataset-{:03d}.pkl'.format(epoch)
+        checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/CNN_IMU-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
     return train_losses, valid_losses, y_pred
