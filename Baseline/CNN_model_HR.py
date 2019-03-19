@@ -508,11 +508,13 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
         valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+        a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
         
         print(y_pred.size())
         print(valid_labels_tensor.size())
+        print(a.size())
 
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
