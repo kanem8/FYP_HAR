@@ -264,10 +264,12 @@ img_labels = []
 
 print("images = {}".format(images))
 
-indexes = list(range(0, images, 22))
+indexes = list(range(0, len(y_val), 22))
+print("length of indexes = {}".format(len(indexes)))
+
 ctr = 0
-for j in indexes:
-    l = int(y_val[j+int(100/2)])
+for jj in indexes:
+    l = int(y_val[jj+int(100/2)])
     img_labels.append(l)
     # img_labels[ctr] = l
     ctr += 1
@@ -284,12 +286,13 @@ Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 print(Validation_set.img_labels[:])
 
-indexes = list(range(0, 4123))
-for j in indexes: 
-    if (j % 100 == 0):
+indexes2 = list(range(0, 4123, 1))
+
+for ii in indexes2: 
+    if (ii % 100 == 0):
         print()
     # print(Validation_set.img_labels[j], end=' ')
-    print(img_labels[j], end=' ')
+    print(img_labels[ii], end=' ')
 
 
 
