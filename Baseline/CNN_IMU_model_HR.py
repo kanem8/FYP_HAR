@@ -180,7 +180,7 @@ class Dataset(data.Dataset):
 
   def __len__(self):
         'Denotes the total number of samples'
-        return int((len(self.labels) - self.window_size)/(self.frame_shift))
+        return (int((len(self.labels) - self.window_size)/(self.frame_shift)) + 1)
 
   def __getitem__(self, index):
         'Generates one sample of data'
@@ -234,6 +234,8 @@ for jj in indexes:
     ctr += 1
 
 print("length of img_labels = {}".format(len(img_labels)))
+
+val_lab = np.array(img_labels)
 
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
@@ -404,10 +406,10 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Training loss:', train_loss)
         train_losses.append(train_loss.value)
 
-        y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
-        train_labels_tensor = torch.from_numpy(training_set.img_labels)
-        accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
-        print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
+        # y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
+        # train_labels_tensor = torch.from_numpy(training_set.img_labels)
+        # accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
+        # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
         # validation phase
