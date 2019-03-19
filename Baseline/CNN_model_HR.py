@@ -453,6 +453,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
+        print(y_pred_train.size())
+        print(train_labels_tensor.size())
+
         # validation phase
         model.eval()
 
