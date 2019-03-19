@@ -499,8 +499,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
-        print(y_pred_train.size())
-        print(train_labels_tensor.size())
+        # print(y_pred_train.size())
+        # print(train_labels_tensor.size())
 
         # validation phase
         model.eval()
@@ -561,11 +561,11 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         
         print(y_pred.size())
         print(valid_labels_tensor.size())
-        print(a.size())
+        # print(a.size())
 
         print(y_pred)
         print(valid_labels_tensor)
-        print(a)
+        # print(a)
 
         # indexes = list(range(0, 4123))
         # for j in indexes:
