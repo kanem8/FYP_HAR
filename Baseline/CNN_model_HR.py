@@ -264,7 +264,7 @@ img_labels = []
 
 print("images = {}".format(images))
 
-indexes = list(range(0, len(y_val), 22))
+indexes = list(range(0, len(y_val)-100, 22))
 print("length of indexes = {}".format(len(indexes)))
 
 ctr = 0
