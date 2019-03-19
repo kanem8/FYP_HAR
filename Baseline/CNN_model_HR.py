@@ -384,6 +384,11 @@ def load_checkpoint(optimizer, model, filename):
 # # print("mean = ".format(mean))
 # # print("std_dev = ".format(std_dev))
 
+# figure_csv = "~/Repo/FYP_HAR/Baseline/predictions.csv"
+# file_csv = open(figure_csv, 'w')
+# writer = csv.writer(file_csv)
+# writer.writerow(['predictions', 'targets', 'equal'])
+
 
 def train(optimizer, model, num_epochs, first_epoch=1):
 
@@ -519,6 +524,12 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print(y_pred)
         print(valid_labels_tensor)
         print(a)
+
+        indexes = list(range(0, 4123))
+        for j in indexes:
+            print(y_pred[j] + ' ' + valid_labels_tensor[j] + ' ' + a[j])
+
+        # writer.writecolumn 
 
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
