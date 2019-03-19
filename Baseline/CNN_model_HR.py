@@ -266,7 +266,7 @@ print("images = {}".format(images))
 indexes = list(range(0, images, 22))
 ctr = 0
 for j in indexes:
-    l = int(y_val[j+int(100/2)])
+    l = (y_val[j+int(100/2)])
     img_labels[ctr] = l
     ctr += 1
 
