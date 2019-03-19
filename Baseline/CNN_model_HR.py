@@ -258,7 +258,7 @@ dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 with open(dataset_pickle, 'rb') as f:
     [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
-images = int(len(y_val) - 100)/22
+images = int((len(y_val) - 100)/22)
 img_labels = np.zeros((images), dtype=np.int64)
 
 print("images = {}".format(images))
