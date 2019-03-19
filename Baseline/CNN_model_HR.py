@@ -259,16 +259,20 @@ with open(dataset_pickle, 'rb') as f:
     [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
 images = int((len(y_val) - 100)/22)
-img_labels = np.zeros((images), dtype=np.int64)
+# img_labels = np.zeros((images), dtype=np.int64)
+img_labels = []
 
 print("images = {}".format(images))
 
 indexes = list(range(0, images, 22))
 ctr = 0
 for j in indexes:
-    l = (y_val[j+int(100/2)])
-    img_labels[ctr] = l
+    l = int(y_val[j+int(100/2)])
+    img_labels.append(l)
+    # img_labels[ctr] = l
     ctr += 1
+
+# print(img_labels)
 
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
@@ -280,19 +284,21 @@ Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 print(Validation_set.img_labels[:])
 
-# indexes = list(range(0, 4123))
-# for j in indexes: 
-#     if (j % 100 == 0):
-#         print()
-#     # print(Validation_set.img_labels[j], end=' ')
-#     print(img_labels[j], end=' ')
-
 indexes = list(range(0, 4123))
-for j in y_val:
+for j in indexes: 
     if (j % 100 == 0):
         print()
     # print(Validation_set.img_labels[j], end=' ')
-    print(j, end=' ')
+    print(img_labels[j], end=' ')
+
+
+
+# indexes = list(range(0, 4123))
+# for j in y_val:
+#     if (j % 100 == 0):
+#         print()
+#     # print(Validation_set.img_labels[j], end=' ')
+#     print(int(j), end=' ')
 
 
 
