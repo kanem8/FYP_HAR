@@ -214,6 +214,27 @@ class Dataset(data.Dataset):
 
 dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
+with open(dataset_pickle, 'rb') as f:
+    [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
+
+images = int(((y_val.shape[0]) - 100)/22)
+# img_labels = np.zeros((images), dtype=np.int64)
+img_labels = []
+
+print("images = {}".format(images))
+
+indexes = list(range(0, y_val.shape[0]-100, 22))
+print("length of indexes = {}".format(len(indexes)))
+
+ctr = 0
+for jj in indexes:
+    l = int(y_val[jj+int(100/2)])
+    img_labels.append(l)
+    # img_labels[ctr] = l
+    ctr += 1
+
+print("length of img_labels = {}".format(len(img_labels)))
+
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
@@ -452,7 +473,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+        # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+        valid_labels_tensor = torch.from_numpy(val_lab)
+        # a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
