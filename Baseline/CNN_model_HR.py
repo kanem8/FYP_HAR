@@ -260,7 +260,7 @@ print(training_set.img_labels[0:10])
 # Validation data:
 Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
-print(Validation_set.img_labels[4110:4123])
+print(Validation_set.img_labels[:])
 
 
 
@@ -523,11 +523,11 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print(valid_labels_tensor)
         print(a)
 
-        indexes = list(range(0, 4123))
-        for j in indexes:
-            print(y_pred[j], end=' '),
-            print(valid_labels_tensor[j], end=' '),
-            print(a[j])
+        # indexes = list(range(0, 4123))
+        # for j in indexes:
+        #     print(y_pred[j], end=' '),
+        #     print(valid_labels_tensor[j], end=' '),
+        #     print(a[j])
 
         # writer.writecolumn 
 
