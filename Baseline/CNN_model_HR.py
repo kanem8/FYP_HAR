@@ -188,8 +188,6 @@ class Dataset(data.Dataset):
         # self.img_labels = np.array()
         # self.img_labels = []
 
-
-
         with open(pickle_file, 'rb') as f:
             [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
@@ -262,7 +260,7 @@ print(training_set.img_labels[0:10])
 # Validation data:
 Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
-print(Validation_set.img_labels[0:10])
+print(Validation_set.img_labels[4110:4123])
 
 
 
