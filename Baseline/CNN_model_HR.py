@@ -272,7 +272,7 @@ for j in indexes:
     # img_labels[ctr] = l
     ctr += 1
 
-# print(img_labels)
+print("length of img_labels = {}".format(len(img_labels)))
 
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
