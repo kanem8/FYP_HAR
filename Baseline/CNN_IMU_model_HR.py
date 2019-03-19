@@ -223,8 +223,6 @@ print(training_set.img_labels[0:10])
 Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 print(Validation_set.img_labels[0:10])
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Train/figure_labels.csv', ',', header=0)
-
 
 class AverageBase(object):
     
@@ -280,8 +278,8 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
-# optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
+optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+# optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
