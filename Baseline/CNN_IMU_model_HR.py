@@ -130,39 +130,6 @@ train_transform = transforms.Compose([
 # use the same transform for the validation data
 valid_transform = train_transform
 
-# # transform for the training data
-# train_transform_imu = transforms.Compose([
-#     transforms.Grayscale(num_output_channels=1),
-#     transforms.Resize((72, 108)),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.9671], [0.0596])
-#     # transforms.Normalize([0.1307], [0.3081])
-# ])
-
-# train_transform_HR = transforms.Compose([
-#     transforms.Grayscale(num_output_channels=1),
-#     transforms.Resize((72, 108)),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.9959], [0.0218])
-#     # transforms.Normalize([0.1307], [0.3081])
-# ])
-
-# valid_transform_imu = transforms.Compose([
-#     transforms.Grayscale(num_output_channels=1),
-#     transforms.Resize((72, 108)),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.959], [0.062])
-#     # transforms.Normalize([0.1307], [0.3081])
-# ])
-
-# valid_transform_HR = transforms.Compose([
-#     transforms.Grayscale(num_output_channels=1),
-#     transforms.Resize((72, 108)),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.9962], [0.0214])
-#     # transforms.Normalize([0.1307], [0.3081])
-# ])
-
 def window(i, x_data, y_label, window_size):
     X = x_data[:,i:(i+window_size)]
     y = int(y_label[i+int(window_size/2)])
@@ -243,7 +210,7 @@ class Dataset(data.Dataset):
         # self.img_labels = np.append(self.img_labels, y)
         # self.img_labels[index] = y
 
-        return X_HR, X_imu1, X_imu2, X_imu3, y
+        return X_imu1, X_imu2, X_imu3, X_HR, y
 
 dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
