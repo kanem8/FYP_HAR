@@ -280,12 +280,19 @@ Validation_set = Dataset(dataset_pickle, valid_transform, train=False)
 Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 print(Validation_set.img_labels[:])
 
+# indexes = list(range(0, 4123))
+# for j in indexes: 
+#     if (j % 100 == 0):
+#         print()
+#     # print(Validation_set.img_labels[j], end=' ')
+#     print(img_labels[j], end=' ')
+
 indexes = list(range(0, 4123))
-for j in indexes: 
+for j in y_val:
     if (j % 100 == 0):
         print()
     # print(Validation_set.img_labels[j], end=' ')
-    print(img_labels[j], end=' ')
+    print(y_val[j], end=' ')
 
 
 
