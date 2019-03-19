@@ -292,7 +292,7 @@ for j in y_val:
     if (j % 100 == 0):
         print()
     # print(Validation_set.img_labels[j], end=' ')
-    print(y_val[j], end=' ')
+    print(j, end=' ')
 
 
 
