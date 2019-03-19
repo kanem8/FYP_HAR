@@ -527,7 +527,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         indexes = list(range(0, 4123))
         for j in indexes:
-            print(y_pred[j] + ' ' + valid_labels_tensor[j] + ' ' + a[j])
+            print(y_pred[j] + valid_labels_tensor[j] + a[j])
 
         # writer.writecolumn 
 
