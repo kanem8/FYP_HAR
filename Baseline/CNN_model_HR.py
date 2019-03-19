@@ -516,6 +516,10 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print(valid_labels_tensor.size())
         print(a.size())
 
+        print(y_pred)
+        print(valid_labels_tensor)
+        print(a)
+
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
