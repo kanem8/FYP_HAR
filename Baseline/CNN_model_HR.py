@@ -213,7 +213,7 @@ class Dataset(data.Dataset):
 
   def __len__(self):
         'Denotes the total number of samples'
-        return int((len(self.labels) - self.window_size)/(self.frame_shift))
+        return (int((len(self.labels) - self.window_size)/(self.frame_shift)) + 1)
 
   def __getitem__(self, index):
         'Generates one sample of data'
@@ -258,13 +258,13 @@ dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 with open(dataset_pickle, 'rb') as f:
     [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
-images = int((len(y_val) - 100)/22)
+images = int(((y_val.shape[0]) - 100)/22)
 # img_labels = np.zeros((images), dtype=np.int64)
 img_labels = []
 
 print("images = {}".format(images))
 
-indexes = list(range(0, len(y_val)-100, 22))
+indexes = list(range(0, y_val.shape[0]-100, 22))
 print("length of indexes = {}".format(len(indexes)))
 
 ctr = 0
@@ -555,7 +555,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
         # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
         valid_labels_tensor = torch.from_numpy(val_lab)
-        a = (y_pred == valid_labels_tensor)
+        # a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
         
