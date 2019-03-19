@@ -252,6 +252,24 @@ epochs = 12
 
 dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
+# images = int((len(self.labels) - self.window_size)/(self.frame_shift))
+
+
+with open(dataset_pickle, 'rb') as f:
+    [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
+
+images = (len(y_val) - 100)/22
+img_labels = np.zeros((images), dtype=np.int64)
+
+print("images = {}".format(images))
+
+indexes = list(range(0, images, 22))
+ctr = 0
+for j in indexes:
+    l = int(y_val[j+int(100/2)])
+    img_labels[ctr] = l
+    ctr += 1
+
 # Training data
 training_set = Dataset(dataset_pickle, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
@@ -264,9 +282,11 @@ print(Validation_set.img_labels[:])
 
 indexes = list(range(0, 4123))
 for j in indexes: 
-    if (j % 100 != 0):
+    if (j % 100 == 0):
         print()
-    print(Validation_set.img_labels[j], end=' ')
+    # print(Validation_set.img_labels[j], end=' ')
+    print(img_labels[j], end=' ')
+
 
 
 
