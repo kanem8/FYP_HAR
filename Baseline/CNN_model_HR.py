@@ -288,12 +288,13 @@ print(Validation_set.img_labels[:])
 
 indexes2 = list(range(0, 4123, 1))
 
-for ii in indexes2: 
-    if (ii % 100 == 0):
-        print()
-    # print(Validation_set.img_labels[j], end=' ')
-    print(img_labels[ii], end=' ')
+# for ii in indexes2: 
+#     if (ii % 100 == 0):
+#         print()
+#     # print(Validation_set.img_labels[j], end=' ')
+#     print(img_labels[ii], end=' ')
 
+val_lab = np.array(img_labels)
 
 
 # indexes = list(range(0, 4123))
@@ -552,7 +553,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+        # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+        valid_labels_tensor = torch.from_numpy(val_lab)
         a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
