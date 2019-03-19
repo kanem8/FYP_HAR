@@ -72,7 +72,7 @@ class CNN_IMU_HR(nn.Module):
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
-            nn.Linear(21*72*C, 512),
+            nn.Linear(C*13*19, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
