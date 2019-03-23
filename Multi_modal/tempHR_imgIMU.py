@@ -51,14 +51,14 @@ class CNN_IMU_HR(nn.Module):
         super(CNN_IMU_HR, self).__init__()
 
         self.layer1 = nn.Sequential(
-            nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
+            nn.Conv2d(num_channels, C, kernel_size=(5,5), stride=1, padding=(0,0)),
             nn.BatchNorm2d(C),
             nn.ReLU(),
             # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
-            nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
+            nn.Conv2d(C, C, kernel_size=(5,5), stride=1, padding=(0,0)),
             nn.BatchNorm2d(C),
             nn.ReLU(),
-            nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
+            # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer1temp = nn.Sequential(
@@ -73,10 +73,10 @@ class CNN_IMU_HR(nn.Module):
             nn.MaxPool2d(kernel_size=pool)
         )
         self.layer2 = nn.Sequential(
-            nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
+            nn.Conv2d(C, C, kernel_size=(5,5), stride=1, padding=(0,0)),
             nn.BatchNorm2d(C),
             nn.ReLU(),
-            nn.Conv2d(C, C, kernel_size=kernel, stride=1, padding=(0,0)),
+            nn.Conv2d(C, C, kernel_size=(5,5), stride=1, padding=(0,0)),
             nn.BatchNorm2d(C),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=pool),
@@ -93,7 +93,8 @@ class CNN_IMU_HR(nn.Module):
             nn.Dropout(0.5)
         )
         self.fc1 = nn.Sequential(
-            nn.Linear(21*72*C, 512),
+            # nn.Linear(21*72*C, 512),
+            nn.Linear(C*12*21, 512),
             nn.ReLU(),
             nn.Dropout(0.5)
         )
@@ -113,17 +114,20 @@ class CNN_IMU_HR(nn.Module):
     def forward(self, X_imu1, X_imu2, X_imu3, X_HR):
         out1 = self.layer1(X_imu1)
         out1 = self.layer2(out1)
-        out1 = out1.reshape(-1, 21*72*C)
+        # out1 = out1.reshape(-1, 21*72*C)
+        out1 = out1.reshape(-1, C*12*21)
         out1 = self.fc1(out1)
 
         out2 = self.layer1(X_imu2)
         out2 = self.layer2(out2)
-        out2 = out2.reshape(-1, 21*72*C)
+        # out2 = out2.reshape(-1, 21*72*C)
+        out2 = out2.reshape(-1, C*12*21)
         out2 = self.fc1(out2)
 
         out3 = self.layer1(X_imu3)
         out3 = self.layer2(out3)
-        out3 = out3.reshape(-1, 21*72*C)
+        # out3 = out3.reshape(-1, 21*72*C)
+        out3 = out3.reshape(-1, C*12*21)
         out3 = self.fc1(out3)
 
         outHR = self.layer1temp(X_HR)
