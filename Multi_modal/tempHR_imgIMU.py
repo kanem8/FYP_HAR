@@ -221,10 +221,10 @@ class Dataset(data.Dataset):
         
         if self.train:
             self.data = X_train.transpose() # transpose so that sensor channels are rows and samples are columns, can now apply sliding window
-            # self.labels = y_train
+            self.rawlabels = y_train
         else:
             self.data = X_val.transpose()
-            # self.labels = y_val
+            self.rawlabels = y_val
 
   def __len__(self):
         'Denotes the total number of samples'
@@ -244,7 +244,8 @@ class Dataset(data.Dataset):
         # plot_HR = Image.open(self.path_HR + ID + '.jpg')
 
         i = index*(self.frame_shift)
-        X_HR, y = window(i, self.data[0:1,:], self.labels, self.window_size)
+    
+        X_HR, yhr = window(i, self.data[0:1,:], self.rawlabels, self.window_size)
 
 
 #         y = self.labels[ID] ID??
@@ -268,6 +269,10 @@ train_path = '/data/mark/NetworkDatasets/pamap2_HR/Train/'
 
 training_set = Dataset(dataset_train, dataset_pickle, train_path, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
+print("labels size = {}".format(len(training_set.labels)))
+print("labels size = {}".format(len(training_set.labels)))
+
+
 
 dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/pamap2_HR/Validation/figure_labels.csv', ',', header=0)
 
