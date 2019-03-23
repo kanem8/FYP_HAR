@@ -59,7 +59,7 @@ class CNN_IMU_HR(nn.Module):
             nn.BatchNorm2d(C),
             nn.ReLU(),
             # nn.LocalResponseNorm(size=5, alpha=0.0001, beta=0.75),
-            nn.MaxPool2d(kernel_size=pool)
+            nn.MaxPool2d(kernel_size=(2,2))
         )
         self.layer1temp = nn.Sequential(
             nn.Conv2d(num_channels, C, kernel_size=kernel, stride=1, padding=(0,0)),
@@ -79,7 +79,7 @@ class CNN_IMU_HR(nn.Module):
             nn.Conv2d(C, C, kernel_size=(5,5), stride=1, padding=(0,0)),
             nn.BatchNorm2d(C),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=pool),
+            nn.MaxPool2d(kernel_size=(2,2)),
             nn.Dropout(0.5)
         )
         self.layer2temp = nn.Sequential(
