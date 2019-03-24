@@ -274,8 +274,8 @@ train_path = '/data/mark/NetworkDatasets/pamap2_HR/Train/'
 
 training_set = Dataset(dataset_train, dataset_pickle, train_path, train_transform, train=True)
 train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
-print("labels size = {}".format(len(training_set.labels)))
-print("labels size = {}".format(len(training_set.labels)))
+# print("labels size = {}".format(len(training_set.labels)))
+# print("labels size = {}".format(len(training_set.labels)))
 
 
 
@@ -342,6 +342,11 @@ model = CNN_IMU_HR()
 model.to(device)
 
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
+
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
 # optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 
 def save_checkpoint(optimizer, model, epoch, filename):
@@ -385,6 +390,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
         print('Epoch', epoch)
+        scheduler.step()
+        current_lr = get_lr(optimizer)
+        print("Current learning rate = {}".format(current_lr))
 
         # train phase
         model.train()
