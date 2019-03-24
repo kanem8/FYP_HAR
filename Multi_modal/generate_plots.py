@@ -40,8 +40,8 @@ def sliding_window_mm(X_data, y_data, T, s, target_filepath):
     # j = 250000
     for j in rows:
         
-        if j > s*15:
-            break
+        # if j > s*15:
+        #     break
 
         label_idx = j
 
