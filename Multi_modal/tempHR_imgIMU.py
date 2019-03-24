@@ -44,6 +44,7 @@ kcol = 5
 outrows = (rows - krow + 2*p)/s + 1
 outcols = (columns - kcol + 2*p)/s + 1
 
+size = C*rows*columns
 
 class CNN_IMU_HR(nn.Module):
 
@@ -525,4 +526,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=30)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=12)
