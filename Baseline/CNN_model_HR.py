@@ -583,3 +583,20 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
 
 train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
+
+epochs = range(1, len(train_losses) + 1)
+
+plt.figure(figsize=(10,6))
+plt.plot(epochs, train_losses, '-o', label='Training loss')
+plt.plot(epochs, valid_losses, '-o', label='Validation loss')
+plt.legend()
+plt.title('Learning curves')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.xticks(epochs)
+
+figPath = '/home/mark/Repo/FYP_HAR/Baseline/learning_curves/'
+figName = 'CNN_model.jpg'
+plt.savefig(figPath + figName)
+plt.close()
+# plt.show()
