@@ -190,8 +190,6 @@ class Dataset(data.Dataset):
         X_imu3, y = window(i, self.data[27:40,:], self.labels, self.window_size)
 
 
-
-    
         if self.transform:
             X_HR = torch.from_numpy(X_HR).float()
             X_HR = X_HR.unsqueeze(dim=0)
@@ -475,7 +473,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
         # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
         valid_labels_tensor = torch.from_numpy(val_lab)
-        # a = (y_pred == valid_labels_tensor)
+        # a = (y_pred == valid_labels_tensor)s
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
