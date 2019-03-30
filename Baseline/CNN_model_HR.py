@@ -21,6 +21,8 @@ import pandas as pd
 # from itertools import izip
 import csv
 import pickle
+import plot_confusion_matrix as con
+
 
 print('PyTorch version:', torch.__version__)
 
@@ -600,3 +602,20 @@ figName = 'CNN_model.jpg'
 plt.savefig(figPath + figName)
 plt.close()
 # plt.show()
+
+# Plot confusion matrix and save
+class_names = con.class_names1
+# valid_labels_tensor = torch.from_numpy(val_lab)
+y_true = np.asarray(val_lab)
+y_pred_Arr = y_pred.numpy()
+figcon, zx = con.plot_confusion_matrix(y_true, y_pred_Arr, classes=class_names, normalize=True,
+                      title='Normalized confusion matrix')
+
+# class_names = ['0', '1', '2']
+# # Plot normalized confusion matrix
+# plot_confusion_matrix(y_test, y_pred, classes=class_names, normalize=True,
+#                       title='Normalized confusion matrix')
+
+# plt.show()
+# plt.savefig('C:/Users/markk/FYP_Folder/example_confusion.jpg')
+figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')
