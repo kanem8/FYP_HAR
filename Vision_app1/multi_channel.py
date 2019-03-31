@@ -134,7 +134,7 @@ class CNN_IMU_HR(nn.Module):
 
 # transform for the training data
 train_transform = transforms.Compose([
-    # transforms.Grayscale(num_output_channels=1),
+    transforms.Grayscale(num_output_channels=1),
     transforms.Resize((72, 108)),
     transforms.ToTensor(),
     # transforms.Normalize([0.9671], [0.0596])
