@@ -218,6 +218,10 @@ class Dataset(data.Dataset):
             X_HR = torch.from_numpy(X_HR).float()
             X_HR = X_HR.unsqueeze(dim=0)
             # plot_HR = self.transform(plot_HR)
+        
+        plot_imu1 = plot_imu1.squeeze()
+        plot_imu2 = plot_imu2.squeeze()
+        plot_imu3 = plot_imu3.squeeze()
 
         tensor_list = [plot_imu1, plot_imu2, plot_imu3]
         multi_channel_plot = torch.stack(tensor_list)
