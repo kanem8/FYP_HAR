@@ -102,11 +102,11 @@ def sliding_window_v2(pickle_file, T, s, target_filepath):
     with open(pickle_file, 'rb') as f:
             [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
-    if target_filepath == '/data/mark/NetworkDatasets/vision_app2/Train':
+    if target_filepath == '/data/mark/NetworkDatasets/vision_app2/Train/':
         X_data = X_train
         y_data = y_train
 
-    elif target_filepath == '/data/mark/NetworkDatasets/vision_app2/Validation':
+    elif target_filepath == '/data/mark/NetworkDatasets/vision_app2/Validation/':
         X_data = X_val
         y_data = y_val
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     s = 50
 
     # to generate plots of IMUs stored together with heart rate sensor
-    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Train')
+    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Train/')
     sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Validation/')
     sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Test/')
 
