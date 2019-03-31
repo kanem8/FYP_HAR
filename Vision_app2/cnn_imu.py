@@ -215,7 +215,7 @@ class Dataset(data.Dataset):
 
         self.list_IDs = dataframe.iloc[:,0:1].values.reshape(-1)
         self.labels = dataframe.iloc[:,1:].values.reshape(-1)
-        self.labels = int(self.labels)
+        self.labels = self.labels.astype(int)
         print("shape of IDs: {}".format(self.list_IDs.shape))
         print("shape of labels: {}".format(self.labels.shape))
 
