@@ -187,7 +187,7 @@ def sliding_window_v2(pickle_file, T, s, target_filepath):
         image_IMU3 = target_filepath + "IMU_3Ankle/fig" + str(count_figures) + ".jpg"
         fig_IMU3.savefig(image_IMU3)
 
-        writer.writerow([('fig' + str(count_figures)), str(y_data[label_idx])])
+        writer.writerow([('fig' + str(count_figures)), str(int(y_data[label_idx]))])
 
         plt.close('all')
 
