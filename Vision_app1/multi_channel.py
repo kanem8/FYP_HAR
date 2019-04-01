@@ -303,7 +303,7 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
+optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
 scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
 
 def get_lr(optimizer):
