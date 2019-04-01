@@ -304,7 +304,7 @@ model = CNN_IMU_HR()
 model.to(device)
 
 optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, nesterov=True)
-scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
+# scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -352,7 +352,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
         print('Epoch', epoch)
-        scheduler.step()
+        # scheduler.step()
         current_lr = get_lr(optimizer)
         print("Current learning rate = {}".format(current_lr))
 
