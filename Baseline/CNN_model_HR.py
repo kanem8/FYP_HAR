@@ -392,7 +392,9 @@ model.to(device)
 
 # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
-
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
 
 
 
@@ -415,27 +417,7 @@ def load_checkpoint(optimizer, model, filename):
 
 
 
-#!mkdir -p checkpoints
-
-# count = 0
-# for batch, targets in train_loader:
-#     if count > 1:
-#         break
-#     mean = batch.mean()
-#     std_dev = batch.std()
-#     count += 1
-
-
-# print(mean) # 0.9671
-# print(std_dev) # 0.0596
-# # print("mean = ".format(mean))
-# # print("std_dev = ".format(std_dev))
-
-# figure_csv = "~/Repo/FYP_HAR/Baseline/predictions.csv"
-# file_csv = open(figure_csv, 'w')
-# writer = csv.writer(file_csv)
-# writer.writerow(['predictions', 'targets', 'equal'])
-
+best_accuracy = 0
 
 def train(optimizer, model, num_epochs, first_epoch=1):
 
@@ -455,7 +437,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     train_losses = []
     valid_losses = []
     
-        
+    best_y_pred = []
+    
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
         print('Epoch', epoch)
@@ -563,7 +546,17 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         valid_labels_tensor = torch.from_numpy(val_lab)
         # a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+        val_accuracy = float(accuracy) * 100
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+        if val_accuracy > best_accuracy:
+            best_accuracy = val_accuracy
+            best_y_pred = y_pred
+            torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pt')
+        
+
+
+        val_accuracy
         
         print(y_pred.size())
         print(valid_labels_tensor.size())
@@ -585,18 +578,22 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
-    return train_losses, valid_losses, y_pred
+    return train_losses, valid_losses, y_pred, best_y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
 
+train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
+
+
+# Learning Curves Plot
 epochs = range(1, len(train_losses) + 1)
-
 plt.figure(figsize=(10,6))
 plt.plot(epochs, train_losses, '-o', label='Training loss')
 plt.plot(epochs, valid_losses, '-o', label='Validation loss')
 plt.legend()
-plt.title('Learning curves')
+current_lr = get_lr(optimizer)
+
+plt.title('CNN-2 Learning Curves - Learning Rate = {}'.format(current_lr))
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.xticks(epochs)
@@ -605,21 +602,17 @@ figPath = '/home/mark/Repo/FYP_HAR/Baseline/learning_curves/'
 figName = 'CNN_model.jpg'
 plt.savefig(figPath + figName)
 plt.close()
-# plt.show()
+
 
 # Plot confusion matrix and save
 class_names = con.class_names1
 # valid_labels_tensor = torch.from_numpy(val_lab)
 y_true = np.asarray(val_lab)
-y_pred_Arr = y_pred.numpy()
-figcon, zx = con.plot_confusion_matrix(y_true, y_pred_Arr, classes=class_names, normalize=True,
-                      title='Normalized confusion matrix')
+# y_pred_Arr = y_pred.numpy()
+best_y_pred_Arr = best_y_pred.numpy()
 
-# class_names = ['0', '1', '2']
-# # Plot normalized confusion matrix
-# plot_confusion_matrix(y_test, y_pred, classes=class_names, normalize=True,
-#                       title='Normalized confusion matrix')
+print("Best accuracy found for validation set: {}".format(best_accuracy))
+figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
+                      title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(best_accuracy))
 
-# plt.show()
-# plt.savefig('C:/Users/markk/FYP_Folder/example_confusion.jpg')
 figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')

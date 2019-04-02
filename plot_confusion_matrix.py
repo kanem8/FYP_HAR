@@ -61,7 +61,7 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     """
     if not title:
         if normalize:
-            title = 'Normalized confusion matrix'
+            title = 'Normalized Confusion Matrix'
         else:
             title = 'Confusion matrix, without normalization'
 
