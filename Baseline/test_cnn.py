@@ -27,6 +27,8 @@ sys.path.append('..')
 
 import plot_confusion_matrix as con
 
+import CNN_model_HR
+
 
 print('PyTorch version:', torch.__version__)
 
@@ -245,7 +247,7 @@ class MovingAverage(AverageBase):
 
 
 # Model class must be defined somewhere
-model = torch.load('/data/mark/saved_models/baseline/cnn_baseline.pkl')
+model = torch.load('/data/mark/saved_models/baseline/cnn_baseline.pt')
 model.eval()
 
 

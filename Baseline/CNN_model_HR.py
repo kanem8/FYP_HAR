@@ -553,7 +553,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
             best_y_pred = y_pred
-            torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pkl')
+            torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pt')
         
         
         print(y_pred.size())
