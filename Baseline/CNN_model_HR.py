@@ -417,7 +417,6 @@ def load_checkpoint(optimizer, model, filename):
 
 
 
-best_accuracy = 0
 
 def train(optimizer, model, num_epochs, first_epoch=1):
 
@@ -438,6 +437,8 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     valid_losses = []
     
     best_y_pred = []
+
+    best_accuracy = 0
     
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
@@ -554,9 +555,6 @@ def train(optimizer, model, num_epochs, first_epoch=1):
             best_y_pred = y_pred
             torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pt')
         
-
-
-        val_accuracy
         
         print(y_pred.size())
         print(valid_labels_tensor.size())
@@ -611,8 +609,15 @@ y_true = np.asarray(val_lab)
 # y_pred_Arr = y_pred.numpy()
 best_y_pred_Arr = best_y_pred.numpy()
 
-print("Best accuracy found for validation set: {}".format(best_accuracy))
+
+valid_labels_tensor = torch.from_numpy(val_lab)
+# a = (y_pred == valid_labels_tensor)
+accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
+val_accuracy_best = float(accuracy) * 100
+print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+print("Best accuracy found for validation set: {}".format(val_accuracy_best))
 figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
-                      title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(best_accuracy))
+                      title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
 
 figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')
