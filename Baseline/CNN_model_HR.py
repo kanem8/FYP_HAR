@@ -50,47 +50,6 @@ outrows = (rows - krow + 2*p)/s + 1
 outcols = (columns - kcol + 2*p)/s + 1
 
 
-# class Single_IMU(nn.Module):
-
-#     def __init__(self, num_channels=3, kernel=(1,5), pool=(1,2), num_classes=12):
-#         super(Single_IMU, self).__init__()
-#         self.conv1 = nn.Conv2d(num_channels, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
-#         self.conv2 = nn.Conv2d(C, C, kernel, stride=1, padding=(0,0)) # try no padding first, column padding - padding=(0,1)
-#         self.pool1 = nn.MaxPool2d(pool)
-        
-#         self.drop1 = nn.Dropout(0.5)
-        
-#         self.fc1 = nn.Linear(21*72*C, 512)
-#         self.fc2 = nn.Linear(512, 512)
-#         self.fc3 = nn.Linear(512, num_classes)
-        
-#     def forward(self, X_imu1):
-#         X_imu1 = F.relu(self.conv1(X_imu1))
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = self.pool1(X_imu1)
-        
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = F.relu(self.conv2(X_imu1))
-#         X_imu1 = self.pool1(X_imu1)
-
-#         # print("After second pooling, shape is: {}".format(X_imu1.size()))
-        
-#         # 1st fully connected
-#         X_imu1 = self.drop1(X_imu1)
-#         X_imu1 = X_imu1.reshape(-1, 21*72*C)
-#         # X_imu1 = X_imu1.reshape(X_imu1.size(0), -1)
-#         X_imu1 = F.relu(self.fc1(X_imu1))
-        
-#         # 2nd fully connected
-#         X_imu1 = self.drop1(X_imu1)
-#         X_imu1 = F.relu(self.fc2(X_imu1))
-        
-#         # 3rd fully connected
-#         X_imu1 = self.fc3(X_imu1)
-        
-#         return X_imu1  # logits 
-
-
 class Single_Branch(nn.Module):
 
     def __init__(self, num_channels=1, kernel=(1,5), pool=(1,2), num_classes=12):
@@ -164,18 +123,7 @@ def window(i, x_data, y_label, window_size):
     X = x_data[:,i:(i+window_size)]
     y = int(y_label[i+int(window_size/2)])
 
-
-    # if (i+window_size) > y_label.shape[0]:
-    #     # print("i = {}".format(i))
-    #     # print("y_label.shape[0] = {}".format(y_label.shape[0]))
-    #     y = int(y_label[i])
-    # else:
-    #     y = int(y_label[i+int(window_size/2)])
-
-
     return X, y
-
-
 
 
 from torch.utils import data
@@ -419,17 +367,6 @@ def load_checkpoint(optimizer, model, filename):
 
 
 def train(optimizer, model, num_epochs, first_epoch=1):
-
-    # # Code for debugging
-    # file1 = '/home/mark/predictions1.csv'
-    # test_csv1 = open(file1, 'w')
-    # writer1 = csv.writer(test_csv1)
-    # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
-
-    # file2 = '/home/mark/predictions2.csv'
-    # test_csv2 = open(file2, 'w')
-    # writer2 = csv.writer(test_csv2)
-    # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
     criterion = nn.CrossEntropyLoss()
 
@@ -525,27 +462,12 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 # save predictions
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
-                # # Code for debugging
-                # if epoch == 1:
-                #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-                # if epoch == 6:
-                #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-
-                # y_pred2 = torch.max(predictions.data, 1)
-                # total += targets.size(0)
-                # targets_tensor = torch.from_numpy(targets)
-                # correct += (y_pred2 == targets_tensor).sum().item()
-
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
         valid_labels_tensor = torch.from_numpy(val_lab)
-        # a = (y_pred == valid_labels_tensor)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         val_accuracy = float(accuracy) * 100
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
@@ -554,23 +476,6 @@ def train(optimizer, model, num_epochs, first_epoch=1):
             best_accuracy = val_accuracy
             best_y_pred = y_pred
             torch.save(model.state_dict(), '/data/mark/saved_models/baseline/cnn_baseline.pt')
-        
-        
-        print(y_pred.size())
-        print(valid_labels_tensor.size())
-        # print(a.size())
-
-        print(y_pred)
-        print(valid_labels_tensor)
-        # print(a)
-
-        # indexes = list(range(0, 4123))
-        # for j in indexes:
-        #     print(y_pred[j], end=' '),
-        #     print(valid_labels_tensor[j], end=' '),
-        #     print(a[j])
-
-        # writer.writecolumn 
 
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)

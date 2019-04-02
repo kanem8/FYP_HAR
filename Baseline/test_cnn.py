@@ -255,69 +255,80 @@ device = torch.device("cuda")
 model = Single_Branch()
 model.load_state_dict(torch.load(PATH))
 model.to(device)
-model.eval()
+
+def test(model=model, test_loader=test_loader):
+
+    model.eval()
+
+    criterion = nn.CrossEntropyLoss()
+
+    train_losses = []
+    valid_losses = []
+
+    best_y_pred = []
+
+
+    valid_loss = RunningAverage()
+
+    # keep track of predictions
+    y_pred = []
+
+    correct = 0
+    total = 0
+
+    # We don't need gradients for validation, so wrap in 
+    # no_grad to save memory
+    with torch.no_grad():
+
+        for batch, targets in test_loader:
+
+            # Move the training batch to the GPU
+            batch = batch.to(device)
+            targets = targets.to(device)
+
+            # forward propagation
+            predictions = model(batch)
+
+            # calculate the loss
+            loss = criterion(predictions, targets)
+
+            # update running loss value
+            valid_loss.update(loss)
+
+            # save predictions
+            y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
+
+            # # Code for debugging
+            # if epoch == 1:
+            #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+            # if epoch == 6:
+            #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
+
+
+            # y_pred2 = torch.max(predictions.data, 1)
+            # total += targets.size(0)
+            # targets_tensor = torch.from_numpy(targets)
+            # correct += (y_pred2 == targets_tensor).sum().item()
+
+    print('Validation loss:', valid_loss)
+    valid_losses.append(valid_loss.value)
+
+    # Calculate validation accuracy
+    y_pred = torch.tensor(y_pred, dtype=torch.int64)
+    # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
+    valid_labels_tensor = torch.from_numpy(val_lab)
+    # a = (y_pred == valid_labels_tensor)
+    accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+    val_accuracy = float(accuracy) * 100
+    print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
 
 
-criterion = nn.CrossEntropyLoss()
-
-train_losses = []
-valid_losses = []
-
-best_y_pred = []
 
 
-valid_loss = RunningAverage()
+if __name__ == '__main__':
 
-# keep track of predictions
-y_pred = []
+    test()
 
-correct = 0
-total = 0
-
-# We don't need gradients for validation, so wrap in 
-# no_grad to save memory
-with torch.no_grad():
-
-    for batch, targets in test_loader:
-
-        # Move the training batch to the GPU
-        batch = batch.to(device)
-        targets = targets.to(device)
-
-        # forward propagation
-        predictions = model(batch)
-
-        # calculate the loss
-        loss = criterion(predictions, targets)
-
-        # update running loss value
-        valid_loss.update(loss)
-
-        # save predictions
-        y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
-
-        # # Code for debugging
-        # if epoch == 1:
-        #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-        # if epoch == 6:
-        #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-
-        # y_pred2 = torch.max(predictions.data, 1)
-        # total += targets.size(0)
-        # targets_tensor = torch.from_numpy(targets)
-        # correct += (y_pred2 == targets_tensor).sum().item()
-
-print('Validation loss:', valid_loss)
-valid_losses.append(valid_loss.value)
-
-# Calculate validation accuracy
-y_pred = torch.tensor(y_pred, dtype=torch.int64)
-# valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
-valid_labels_tensor = torch.from_numpy(val_lab)
-# a = (y_pred == valid_labels_tensor)
-accuracy = torch.mean((y_pred == valid_labels_tensor).float())
-val_accuracy = float(accuracy) * 100
-print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+    print('Done')
