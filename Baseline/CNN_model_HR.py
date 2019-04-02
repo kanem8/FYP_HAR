@@ -484,45 +484,47 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred, best_y_pred
 
 
-
-train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
-
-
-# Learning Curves Plot
-epochs = range(1, len(train_losses) + 1)
-plt.figure(figsize=(10,6))
-plt.plot(epochs, train_losses, '-o', label='Training loss')
-plt.plot(epochs, valid_losses, '-o', label='Validation loss')
-plt.legend()
-current_lr = get_lr(optimizer)
-
-plt.title('CNN-2 Learning Curves - Learning Rate = {}'.format(current_lr))
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.xticks(epochs)
-
-figPath = '/home/mark/Repo/FYP_HAR/Baseline/learning_curves/'
-figName = 'CNN_model.jpg'
-plt.savefig(figPath + figName)
-plt.close()
+if __name__ == '__main__':
 
 
-# Plot confusion matrix and save
-class_names = con.class_names1
-# valid_labels_tensor = torch.from_numpy(val_lab)
-y_true = np.asarray(val_lab)
-# y_pred_Arr = y_pred.numpy()
-best_y_pred_Arr = best_y_pred.numpy()
+    train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
 
 
-valid_labels_tensor = torch.from_numpy(val_lab)
-# a = (y_pred == valid_labels_tensor)
-accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
-val_accuracy_best = float(accuracy) * 100
-print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+    # Learning Curves Plot
+    epochs = range(1, len(train_losses) + 1)
+    plt.figure(figsize=(10,6))
+    plt.plot(epochs, train_losses, '-o', label='Training loss')
+    plt.plot(epochs, valid_losses, '-o', label='Validation loss')
+    plt.legend()
+    current_lr = get_lr(optimizer)
 
-print("Best accuracy found for validation set: {}".format(val_accuracy_best))
-figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
-                      title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
+    plt.title('CNN-2 Learning Curves - Learning Rate = {}'.format(current_lr))
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.xticks(epochs)
 
-figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')
+    figPath = '/home/mark/Repo/FYP_HAR/Baseline/learning_curves/'
+    figName = 'CNN_model.jpg'
+    plt.savefig(figPath + figName)
+    plt.close()
+
+
+    # Plot confusion matrix and save
+    class_names = con.class_names1
+    # valid_labels_tensor = torch.from_numpy(val_lab)
+    y_true = np.asarray(val_lab)
+    # y_pred_Arr = y_pred.numpy()
+    best_y_pred_Arr = best_y_pred.numpy()
+
+
+    valid_labels_tensor = torch.from_numpy(val_lab)
+    # a = (y_pred == valid_labels_tensor)
+    accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
+    val_accuracy_best = float(accuracy) * 100
+    print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+    print("Best accuracy found for validation set: {}".format(val_accuracy_best))
+    figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
+                        title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
+
+    figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')
