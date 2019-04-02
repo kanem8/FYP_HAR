@@ -314,6 +314,9 @@ def test(model=model, test_loader=test_loader):
     print('Validation loss:', valid_loss)
     valid_losses.append(valid_loss.value)
 
+    y_pred_arr = y_pred
+
+
     # Calculate validation accuracy
     y_pred = torch.tensor(y_pred, dtype=torch.int64)
     # valid_labels_tensor = torch.from_numpy(Validation_set.img_labels)
@@ -324,11 +327,23 @@ def test(model=model, test_loader=test_loader):
     print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
 
+    y_true = np.asarray(val_lab)
+    wf1 = con.getF1(y_true, y_pred_arr)
 
+    wf1_percent = float(wf1) * 100
+    print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
+
+    return y_true, y_pred_arr, val_accuracy, wf1_percent
 
 
 if __name__ == '__main__':
 
-    test()
+    class_names = con.class_names1
+
+    y_true, y_pred_arr, val_accuracy, wf1_percent = test()
+    figcon, zx = con.plot_confusion_matrix(y_true, y_pred_arr, classes=class_names, normalize=True,
+                        title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy))
+
+    figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn_test.jpg')
 
     print('Done')
