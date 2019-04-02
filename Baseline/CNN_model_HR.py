@@ -580,7 +580,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
 
 
-train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=1)
+train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
 
 
 # Learning Curves Plot
