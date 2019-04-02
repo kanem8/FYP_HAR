@@ -160,18 +160,18 @@ dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 with open(dataset_pickle, 'rb') as f:
     [(X_train, y_train), (X_val, y_val), (X_test, y_test)] = pickle.load(f)
 
-images = int(((y_val.shape[0]) - 100)/22)
+images = int(((y_test.shape[0]) - 100)/22)
 # img_labels = np.zeros((images), dtype=np.int64)
 img_labels = []
 
 print("images = {}".format(images))
 
-indexes = list(range(0, y_val.shape[0]-100, 22))
+indexes = list(range(0, y_test.shape[0]-100, 22))
 print("length of indexes = {}".format(len(indexes)))
 
 ctr = 0
 for jj in indexes:
-    l = int(y_val[jj+int(100/2)])
+    l = int(y_test[jj+int(100/2)])
     img_labels.append(l)
     # img_labels[ctr] = l
     ctr += 1
