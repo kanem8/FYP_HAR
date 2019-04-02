@@ -245,7 +245,7 @@ class MovingAverage(AverageBase):
 
 
 # Model class must be defined somewhere
-model = torch.load('/data/mark/saved_models/baseline/cnn_baseline.pt')
+model = torch.load('/data/mark/saved_models/baseline/cnn_baseline.pkl')
 model.eval()
 
 

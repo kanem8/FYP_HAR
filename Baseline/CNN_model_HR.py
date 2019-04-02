@@ -553,7 +553,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
             best_y_pred = y_pred
-            torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pt')
+            torch.save(model, '/data/mark/saved_models/baseline/cnn_baseline.pkl')
         
         
         print(y_pred.size())
@@ -580,7 +580,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
 
 
-train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
+train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=1)
 
 
 # Learning Curves Plot
