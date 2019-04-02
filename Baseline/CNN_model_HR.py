@@ -376,6 +376,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     best_y_pred = []
 
     best_accuracy = 0
+    best_wf1 = 0
     
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
@@ -480,11 +481,16 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
         print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
 
-
-        if val_accuracy > best_accuracy:
-            best_accuracy = val_accuracy
+        if wf1 > best_wf1:
+            best_wf1 = wf1
             best_y_pred = y_pred
             torch.save(model.state_dict(), '/data/mark/saved_models/baseline/cnn_baseline.pt')
+
+
+        # if val_accuracy > best_accuracy:
+        #     best_accuracy = val_accuracy
+        #     best_y_pred = y_pred
+        #     torch.save(model.state_dict(), '/data/mark/saved_models/baseline/cnn_baseline.pt')
 
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/Baseline-{:03d}.pkl'.format(epoch)
@@ -525,14 +531,17 @@ if __name__ == '__main__':
     # y_pred_Arr = y_pred.numpy()
     best_y_pred_Arr = best_y_pred.numpy()
 
-
     valid_labels_tensor = torch.from_numpy(val_lab)
     # a = (y_pred == valid_labels_tensor)
     accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
     val_accuracy_best = float(accuracy) * 100
     print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
+    # y_true = np.asarray(val_lab)
+    wf1_best = con.getF1(y_true, best_y_pred_Arr)
+
     print("Best accuracy found for validation set: {}".format(val_accuracy_best))
+    print("Best accuracy found for validation set: {}".format(wf1_best))
     figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
                         title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
 
