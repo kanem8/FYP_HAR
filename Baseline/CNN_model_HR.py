@@ -465,12 +465,21 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
 
+        y_pred_arr = y_pred
+
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
         valid_labels_tensor = torch.from_numpy(val_lab)
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         val_accuracy = float(accuracy) * 100
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+
+        y_true = np.asarray(val_lab)
+        wf1 = con.f1_score(y_true, y_pred_arr)
+
+        print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
+
 
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
@@ -487,7 +496,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 if __name__ == '__main__':
 
 
-    train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=20)
+    train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=5)
 
 
     # Learning Curves Plot

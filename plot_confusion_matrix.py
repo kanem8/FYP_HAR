@@ -32,6 +32,7 @@ import matplotlib.pyplot as plt
 from sklearn import svm, datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
 from sklearn.utils.multiclass import unique_labels
 
 # # import some data to play with
@@ -104,6 +105,14 @@ def plot_confusion_matrix(y_true, y_pred, classes,
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
     return fig, ax
+
+
+
+def getF1(y_true, y_pred):
+    f1 = f1_score(y_true, y_pred, average='weighted')
+
+    return f1
+
 
 
 # np.set_printoptions(precision=2)
