@@ -476,7 +476,7 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
 
         y_true = np.asarray(val_lab)
-        wf1 = con.f1_score(y_true, y_pred_arr)
+        wf1 = con.getF1(y_true, y_pred_arr)
 
         print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
 
