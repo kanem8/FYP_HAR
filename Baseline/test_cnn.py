@@ -27,7 +27,7 @@ sys.path.append('..')
 
 import plot_confusion_matrix as con
 
-import CNN_model_HR
+from CNN_model_HR import Single_Branch
 
 
 print('PyTorch version:', torch.__version__)
@@ -243,11 +243,18 @@ class MovingAverage(AverageBase):
         return self.value
 
 
+PATH = '/data/mark/saved_models/baseline/cnn_baseline.pt'
 
 
+# # Model class must be defined somewhere
+# model = torch.load(PATH)
+# model.eval()
 
-# Model class must be defined somewhere
-model = torch.load('/data/mark/saved_models/baseline/cnn_baseline.pt')
+
+device = torch.device("cuda")
+model = Single_Branch()
+model.load_state_dict(torch.load(PATH))
+model.to(device)
 model.eval()
 
 
