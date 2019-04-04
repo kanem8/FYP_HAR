@@ -200,13 +200,13 @@ if __name__ == '__main__':
     
     pickle_file = '/data/mark/NetworkDatasets/pamap2/pamap2.data'
 
-    T = 200
-    s = 50
+    T = 100
+    s = 22
 
     # to generate plots of IMUs stored together with heart rate sensor
-    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Train/')
-    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Validation/')
-    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2/Test/')
+    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2_b/Train/')
+    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2_b/Validation/')
+    sliding_window_v2(pickle_file, T, s, '/data/mark/NetworkDatasets/vision_app2_b/Test/')
 
     
 
