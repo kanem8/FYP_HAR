@@ -541,7 +541,7 @@ if __name__ == '__main__':
     wf1_best = con.getF1(y_true, best_y_pred_Arr)
 
     print("Best accuracy found for validation set: {}".format(val_accuracy_best))
-    print("Best accuracy found for validation set: {}".format(wf1_best))
+    print("Best accuracy found for validation set: {}".format(wf1_best*100))
     figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
                         title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
 
