@@ -403,6 +403,8 @@ def test(model=model, test_loader=test_loader):
     # valid_labels_tensor = torch.from_numpy(Validation_set.labels)
     valid_labels_tensor = torch.from_numpy(val_lab)
     accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+    val_accuracy = float(accuracy) * 100
+
     print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
     y_true = np.asarray(val_lab)
