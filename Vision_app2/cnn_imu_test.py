@@ -344,13 +344,15 @@ def test(model=model, test_loader=test_loader):
 
     model.eval()
 
-    valid_loss = RunningAverage()
+    criterion = nn.CrossEntropyLoss()
 
-    
     train_losses = []
     valid_losses = []
 
     best_y_pred = []
+
+
+    valid_loss = RunningAverage()
 
     # keep track of predictions
     y_pred = []
