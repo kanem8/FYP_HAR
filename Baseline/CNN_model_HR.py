@@ -543,6 +543,6 @@ if __name__ == '__main__':
     print("Best accuracy found for validation set: {}".format(val_accuracy_best))
     print("Best accuracy found for validation set: {}".format(wf1_best*100))
     figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
-                        title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy_best))
+                        title='Confusion Matrix - Overall Accuracy = {:.4f}%'.format(val_accuracy_best))
 
     figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn.jpg')

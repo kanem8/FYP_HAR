@@ -342,7 +342,7 @@ if __name__ == '__main__':
 
     y_true, y_pred_arr, val_accuracy, wf1_percent = test()
     figcon, zx = con.plot_confusion_matrix(y_true, y_pred_arr, classes=class_names, normalize=True,
-                        title='Normalized Confusion Matrix - Overall Accuracy = {}'.format(val_accuracy))
+                        title='Confusion Matrix - Overall Accuracy = {:.4f}%'.format(val_accuracy))
 
     figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn_test.jpg')
 
