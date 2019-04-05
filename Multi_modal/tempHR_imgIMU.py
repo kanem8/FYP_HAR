@@ -454,10 +454,10 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         print('Training loss:', train_loss)
         train_losses.append(train_loss.value)
 
-        y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
-        train_labels_tensor = torch.from_numpy(training_set.labels)
-        accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
-        print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
+        # y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
+        # train_labels_tensor = torch.from_numpy(training_set.labels)
+        # accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
+        # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
 
 
         # validation phase

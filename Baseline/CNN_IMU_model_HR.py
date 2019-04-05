@@ -297,8 +297,17 @@ class MovingAverage(AverageBase):
 model = CNN_IMU_HR()
 model.to(device)
 
+
+tot_epochs = 21
+step = int(tot_epochs/3)
 # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step, gamma=0.1)
+
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
 
 def save_checkpoint(optimizer, model, epoch, filename):
     checkpoint_dict = {
@@ -341,6 +350,9 @@ def train(optimizer, model, num_epochs, first_epoch=1):
 
     for epoch in range(first_epoch, first_epoch + num_epochs):
         print('Epoch', epoch)
+        scheduler.step()
+        current_lr = get_lr(optimizer)
+        print("Current learning rate = {}".format(current_lr))
 
         # train phase
         model.train()
@@ -484,4 +496,4 @@ def train(optimizer, model, num_epochs, first_epoch=1):
     return train_losses, valid_losses, y_pred
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=20)
+train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=tot_epochs)
