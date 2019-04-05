@@ -242,29 +242,39 @@ class Dataset(data.Dataset):
 
         return plot_imu1, plot_imu2, plot_imu3, X_HR, y
 
-dataset_train = pd.read_csv('/data/mark/NetworkDatasets/vision_app2/Train/figure_labels.csv', ',', header=0)
+# dataset_train = pd.read_csv('/data/mark/NetworkDatasets/vision_app2/Train/figure_labels.csv', ',', header=0)
 dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
-train_path = '/data/mark/NetworkDatasets/vision_app2/Train/'
+# train_path = '/data/mark/NetworkDatasets/vision_app2/Train/'
 
-training_set = Dataset(dataset_train, dataset_pickle, train_path, train_transform, train=True)
-train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
-# print("labels size = {}".format(len(training_set.labels)))
-# print("labels size = {}".format(len(training_set.labels)))
+# training_set = Dataset(dataset_train, dataset_pickle, train_path, train_transform, train=True)
+# train_loader = DataLoader(training_set, batch_size=50, num_workers=4, shuffle=True)
+# # print("labels size = {}".format(len(training_set.labels)))
+# # print("labels size = {}".format(len(training_set.labels)))
 
 
 
-dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/vision_app2/Validation/figure_labels.csv', ',', header=0)
+# dataset_validation = pd.read_csv('/data/mark/NetworkDatasets/vision_app2/Validation/figure_labels.csv', ',', header=0)
 
-Validation_path = '/data/mark/NetworkDatasets/vision_app2/Validation/'
+# Validation_path = '/data/mark/NetworkDatasets/vision_app2/Validation/'
 
-Validation_set = Dataset(dataset_validation, dataset_pickle, Validation_path, valid_transform, train=False)
-Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
+# Validation_set = Dataset(dataset_validation, dataset_pickle, Validation_path, valid_transform, train=False)
+# Validation_loader = DataLoader(Validation_set, batch_size=50, num_workers=4, shuffle=False)
 
+
+dataset_test = pd.read_csv('/data/mark/NetworkDatasets/vision_app2/Test/figure_labels.csv', ',', header=0)
+test_path = '/data/mark/NetworkDatasets/vision_app2/Test/'
+
+# Validation data:
+test_set = Dataset(dataset_test, dataset_pickle, test_path, valid_transform, train=False)
+test_loader = DataLoader(test_set, batch_size=50, num_workers=4, shuffle=False)
 
 # val_lab = np.array(img_labels)
 # val_lab = dataset_validation.iloc[:,1:].values.reshape(-1).astype(int)
-val_lab = Validation_set.labels
+val_lab = test_set.labels
+
+
+
 
 class AverageBase(object):
     
@@ -317,121 +327,22 @@ class MovingAverage(AverageBase):
         return self.value
 
 
+PATH = '/data/mark/saved_models/va1/cnn_imu.pt'
+
+
+# # Model class must be defined somewhere
+# model = torch.load(PATH)
+# model.eval()
+
+
+device = torch.device("cuda")
 model = CNN_IMU_HR()
+model.load_state_dict(torch.load(PATH))
 model.to(device)
 
-optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
-scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
+def test(model=model, test_loader=test_loader):
 
-def get_lr(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
-# optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
-
-def save_checkpoint(optimizer, model, epoch, filename):
-    checkpoint_dict = {
-        'optimizer': optimizer.state_dict(),
-        'model': model.state_dict(),
-        'epoch': epoch
-    }
-    torch.save(checkpoint_dict, filename)
-
-
-def load_checkpoint(optimizer, model, filename):
-    checkpoint_dict = torch.load(filename)
-    epoch = checkpoint_dict['epoch']
-    model.load_state_dict(checkpoint_dict['model'])
-    if optimizer is not None:
-        optimizer.load_state_dict(checkpoint_dict['optimizer'])
-    return epoch
-
-
-def train(optimizer, model, num_epochs, first_epoch=1):
-    
-    criterion = nn.CrossEntropyLoss()
-
-    train_losses = []
-    valid_losses = []
-
-    best_y_pred = []
-
-    best_accuracy = 0
-    best_wf1 = 0
-
-    for epoch in range(first_epoch, first_epoch + num_epochs):
-        print('Epoch', epoch)
-        scheduler.step()
-        current_lr = get_lr(optimizer)
-        print("Current learning rate = {}".format(current_lr))
-
-        # train phase
-        model.train()
-
-        # create a progress bar
-        # progress = ProgressMonitor(length=len(training_set_imu1))
-
-        train_loss = MovingAverage()
-
-        y_pred_train = []
-
-        # for (batch, targets), (batch2, targets2), (batch3, targets3), (batch4, targets4) in zip(train_loader_imu1, train_loader_imu2, train_loader_imu3, train_loader_HR):
-        for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in train_loader:
-
-            # # Move the training data to the GPU
-            # batch = batch.to(device)
-            # targets = targets.to(device)
-            # batch2 = batch2.to(device)
-            # targets2 = targets2.to(device)            
-            # batch3 = batch3.to(device)
-            # targets3 = targets3.to(device)   
-            # batch4 = batch4.to(device)
-            # targets4 = targets4.to(device)    
-            # 
-            # Move the training data to the GPU
-            batch_imu1 = batch_imu1.to(device)
-            batch_imu2 = batch_imu2.to(device)
-            batch_imu3 = batch_imu3.to(device)
-            batch_HR = batch_HR.to(device)
-            targets = targets.to(device)
-
-            # import pdb; pdb.set_trace()
-
-
-            # clear previous gradient computation
-            optimizer.zero_grad()
-
-            # forward propagation
-            predictions = model(batch_imu1, batch_imu2, batch_imu3, batch_HR)
-
-            # calculate the loss
-            loss = criterion(predictions, targets)
-
-            # backpropagate to compute gradients
-            loss.backward()
-
-            # update model weights
-            optimizer.step()
-
-            # update average loss
-            train_loss.update(loss)
-
-            # save training predictions
-            y_pred_train.extend(predictions.argmax(dim=1).cpu().numpy())
-
-            # update progress bar
-            # progress.update(batch.shape[0], train_loss)
-
-        print('Training loss:', train_loss)
-        train_losses.append(train_loss.value)
-
-        # y_pred_train = torch.tensor(y_pred_train, dtype=torch.int64)
-        # train_labels_tensor = torch.from_numpy(training_set.labels)
-        # accuracy_train = torch.mean((y_pred_train == train_labels_tensor).float())
-        # print('Training accuracy: {:.4f}%'.format(float(accuracy_train) * 100))
-
-
-        # validation phase
-        model.eval()
+           model.eval()
 
         valid_loss = RunningAverage()
 
@@ -489,65 +400,20 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         y_true = np.asarray(val_lab)
         wf1 = con.getF1(y_true, y_pred_arr)
 
+        wf1_percent = float(wf1) * 100
         print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
 
-        if wf1 > best_wf1:
-            best_wf1 = wf1
-            best_y_pred = y_pred
-            torch.save(model.state_dict(), '/data/mark/saved_models/va1/cnn_imu_2.pt')
-
-
-        # Save a checkpoint
-        checkpoint_filename = '/home/mark/checkpoints/v2cnn_imuDataset-{:03d}.pkl'.format(epoch)
-        save_checkpoint(optimizer, model, epoch, checkpoint_filename)
-    
-    return train_losses, valid_losses, y_pred, best_y_pred
+    return y_true, y_pred_arr, val_accuracy, wf1_percent
 
 
 if __name__ == '__main__':
 
-
-    train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=30)
-
-    # Learning Curves Plot
-    epochs = range(1, len(train_losses) + 1)
-    plt.figure(figsize=(10,6))
-    plt.plot(epochs, train_losses, '-o', label='Training loss')
-    plt.plot(epochs, valid_losses, '-o', label='Validation loss')
-    plt.legend()
-    current_lr = get_lr(optimizer)
-
-    plt.title('Machine Vision 1: CNN-IMU-2 Learning Curves - Learning Rate = {}'.format(current_lr))
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.xticks(epochs)
-
-    figPath = '/home/mark/Repo/FYP_HAR/Vision_app2/learning_curves/'
-    figName = 'CNN_IMU_largeT.jpg'
-    plt.savefig(figPath + figName)
-    plt.close()
-
-
-    # Plot confusion matrix and save
     class_names = con.class_names1
-    # valid_labels_tensor = torch.from_numpy(val_lab)
-    y_true = np.asarray(val_lab)
-    # y_pred_Arr = y_pred.numpy()
-    best_y_pred_Arr = best_y_pred.numpy()
 
-    valid_labels_tensor = torch.from_numpy(val_lab)
-    # a = (y_pred == valid_labels_tensor)
-    accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
-    val_accuracy_best = float(accuracy) * 100
-    print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+    y_true, y_pred_arr, val_accuracy, wf1_percent = test()
+    figcon, zx = con.plot_confusion_matrix(y_true, y_pred_arr, classes=class_names, normalize=True,
+                        title='Confusion Matrix - Overall Accuracy = {:.4f}%'.format(val_accuracy))
 
-    # y_true = np.asarray(val_lab)
-    wf1_best = con.getF1(y_true, best_y_pred_Arr)
+    figcon.savefig('/home/mark/Repo/FYP_HAR/Vision_app2/Confusion_graphs/confusion_cnn_imu_largT_test.jpg')
 
-    print("Best accuracy found for validation set: {}".format(val_accuracy_best))
-    print("Best weighted F1 found for validation set: {}".format(wf1_best*100))
-    figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
-                        title='Confusion Matrix - Overall Accuracy = {:.4f}%'.format(val_accuracy_best))
-
-    figcon.savefig('/home/mark/Repo/FYP_HAR/Vision_app2/Confusion_graphs/confusion_cnn_imu_largeT.jpg')
-
+    print('Done')
