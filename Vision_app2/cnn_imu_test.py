@@ -346,6 +346,12 @@ def test(model=model, test_loader=test_loader):
 
     valid_loss = RunningAverage()
 
+    
+    train_losses = []
+    valid_losses = []
+
+    best_y_pred = []
+
     # keep track of predictions
     y_pred = []
 
@@ -356,7 +362,7 @@ def test(model=model, test_loader=test_loader):
     # no_grad to save memory
     with torch.no_grad():
 
-        for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in Validation_loader:
+        for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in test_loader:
 
             # # Move the training data to the GPU
             # batch = batch.to(device)
