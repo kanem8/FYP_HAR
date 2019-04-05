@@ -342,7 +342,7 @@ model.to(device)
 
 def test(model=model, test_loader=test_loader):
 
-           model.eval()
+        model.eval()
 
         valid_loss = RunningAverage()
 
