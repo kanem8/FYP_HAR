@@ -21,6 +21,11 @@ import pandas as pd
 import csv
 import pickle
 
+import sys
+sys.path.append('..')
+
+import plot_confusion_matrix as con
+
 print('PyTorch version:', torch.__version__)
 
 torch.cuda.is_available()
@@ -298,8 +303,8 @@ model = CNN_IMU_HR()
 model.to(device)
 
 
-tot_epochs = 21
-step = int(tot_epochs/3)
+tot_epochs = 20
+step = int(tot_epochs/2)
 # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step, gamma=0.1)
@@ -332,25 +337,20 @@ def load_checkpoint(optimizer, model, filename):
 
 
 def train(optimizer, model, num_epochs, first_epoch=1):
-
-    # file1 = '/home/mark/predictions1.csv'
-    # test_csv1 = open(file1, 'w')
-    # writer1 = csv.writer(test_csv1)
-    # writer1.writerow(['Model_Prediction', 'Actual_Activity'])
-
-    # file2 = '/home/mark/predictions2.csv'
-    # test_csv2 = open(file2, 'w')
-    # writer2 = csv.writer(test_csv2)
-    # writer2.writerow(['Model_Prediction', 'Actual_Activity'])
     
     criterion = nn.CrossEntropyLoss()
 
     train_losses = []
     valid_losses = []
 
+    best_y_pred = []
+
+    best_accuracy = 0
+    best_wf1 = 0
+
     for epoch in range(first_epoch, first_epoch + num_epochs):
         print('Epoch', epoch)
-        scheduler.step()
+        # scheduler.step()
         current_lr = get_lr(optimizer)
         print("Current learning rate = {}".format(current_lr))
 
@@ -464,22 +464,10 @@ def train(optimizer, model, num_epochs, first_epoch=1):
                 # save predictions
                 y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
-                # if epoch == 1:
-                #     writer1.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-                # if epoch == 6:
-                #     writer2.writerow([(predictions.argmax(dim=1).cpu().numpy()), targets])
-
-
-
-
-                # y_pred2 = torch.max(predictions.data, 1)
-                # total += targets.size(0)
-                # targets_tensor = torch.from_numpy(targets)
-                # correct += (y_pred2 == targets_tensor).sum().item()
-
         print('Validation loss:', valid_loss)
         valid_losses.append(valid_loss.value)
+
+        y_pred_arr = y_pred
 
         # Calculate validation accuracy
         y_pred = torch.tensor(y_pred, dtype=torch.int64)
@@ -489,11 +477,71 @@ def train(optimizer, model, num_epochs, first_epoch=1):
         accuracy = torch.mean((y_pred == valid_labels_tensor).float())
         print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
+
+        y_true = np.asarray(val_lab)
+        wf1 = con.getF1(y_true, y_pred_arr)
+
+        print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
+
+        if wf1 > best_wf1:
+            best_wf1 = wf1
+            best_y_pred = y_pred
+            torch.save(model.state_dict(), '/data/mark/saved_models/baseline/cnn_imu.pt')
+
+
         # Save a checkpoint
         checkpoint_filename = '/data/mark/NetworkDatasets/baseline/checkpoints/CNN_IMU-{:03d}.pkl'.format(epoch)
         save_checkpoint(optimizer, model, epoch, checkpoint_filename)
     
-    return train_losses, valid_losses, y_pred
+    return train_losses, valid_losses, y_pred, best_y_pred
+
+if __name__ == '__main__':
 
 
-train_losses, valid_losses, y_pred = train(optimizer, model, num_epochs=tot_epochs)
+    train_losses, valid_losses, y_pred, best_y_pred = train(optimizer, model, num_epochs=tot_epochs)
+
+    # Learning Curves Plot
+    epochs = range(1, len(train_losses) + 1)
+    plt.figure(figsize=(10,6))
+    plt.plot(epochs, train_losses, '-o', label='Training loss')
+    plt.plot(epochs, valid_losses, '-o', label='Validation loss')
+    plt.legend()
+    current_lr = get_lr(optimizer)
+
+    plt.title('CNN-2 Learning Curves - Learning Rate = {}'.format(current_lr))
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.xticks(epochs)
+
+    figPath = '/home/mark/Repo/FYP_HAR/Baseline/learning_curves/'
+    figName = 'CNN_IMU_model.jpg'
+    plt.savefig(figPath + figName)
+    plt.close()
+
+
+    # Plot confusion matrix and save
+    class_names = con.class_names1
+    # valid_labels_tensor = torch.from_numpy(val_lab)
+    y_true = np.asarray(val_lab)
+    # y_pred_Arr = y_pred.numpy()
+    best_y_pred_Arr = best_y_pred.numpy()
+
+    valid_labels_tensor = torch.from_numpy(val_lab)
+    # a = (y_pred == valid_labels_tensor)
+    accuracy = torch.mean((best_y_pred == valid_labels_tensor).float())
+    val_accuracy_best = float(accuracy) * 100
+    print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+
+    # y_true = np.asarray(val_lab)
+    wf1_best = con.getF1(y_true, best_y_pred_Arr)
+
+    print("Best accuracy found for validation set: {}".format(val_accuracy_best))
+    print("Best weighted F1 found for validation set: {}".format(wf1_best*100))
+    figcon, zx = con.plot_confusion_matrix(y_true, best_y_pred_Arr, classes=class_names, normalize=True,
+                        title='Confusion Matrix - Overall Accuracy = {:.4f}%'.format(val_accuracy_best))
+
+    figcon.savefig('/home/mark/Repo/FYP_HAR/Baseline/Confusion_graphs/confusion_cnn_imu.jpg')
+
+
+
+
