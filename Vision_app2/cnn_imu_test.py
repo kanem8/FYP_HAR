@@ -342,66 +342,66 @@ model.to(device)
 
 def test(model=model, test_loader=test_loader):
 
-        model.eval()
+    model.eval()
 
-        valid_loss = RunningAverage()
+    valid_loss = RunningAverage()
 
-        # keep track of predictions
-        y_pred = []
+    # keep track of predictions
+    y_pred = []
 
-        correct = 0
-        total = 0
+    correct = 0
+    total = 0
 
-        # We don't need gradients for validation, so wrap in 
-        # no_grad to save memory
-        with torch.no_grad():
+    # We don't need gradients for validation, so wrap in 
+    # no_grad to save memory
+    with torch.no_grad():
 
-            for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in Validation_loader:
+        for batch_imu1, batch_imu2, batch_imu3, batch_HR, targets in Validation_loader:
 
-                # # Move the training data to the GPU
-                # batch = batch.to(device)
-                # targets = targets.to(device)
-                # batch2 = batch2.to(device)
-                # targets2 = targets2.to(device)            
-                # batch3 = batch3.to(device)
-                # targets3 = targets3.to(device)  
-                # batch4 = batch4.to(device)
-                # targets4 = targets4.to(device)  
-                batch_imu1 = batch_imu1.to(device)
-                batch_imu2 = batch_imu2.to(device)
-                batch_imu3 = batch_imu3.to(device)
-                batch_HR = batch_HR.to(device)
-                targets = targets.to(device)
+            # # Move the training data to the GPU
+            # batch = batch.to(device)
+            # targets = targets.to(device)
+            # batch2 = batch2.to(device)
+            # targets2 = targets2.to(device)            
+            # batch3 = batch3.to(device)
+            # targets3 = targets3.to(device)  
+            # batch4 = batch4.to(device)
+            # targets4 = targets4.to(device)  
+            batch_imu1 = batch_imu1.to(device)
+            batch_imu2 = batch_imu2.to(device)
+            batch_imu3 = batch_imu3.to(device)
+            batch_HR = batch_HR.to(device)
+            targets = targets.to(device)
 
-                # forward propagation
-                predictions = model(batch_imu1, batch_imu2, batch_imu3, batch_HR)
+            # forward propagation
+            predictions = model(batch_imu1, batch_imu2, batch_imu3, batch_HR)
 
-                # calculate the loss
-                loss = criterion(predictions, targets)
+            # calculate the loss
+            loss = criterion(predictions, targets)
 
-                # update running loss value
-                valid_loss.update(loss)
+            # update running loss value
+            valid_loss.update(loss)
 
-                # save predictions
-                y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
+            # save predictions
+            y_pred.extend(predictions.argmax(dim=1).cpu().numpy())
 
-        print('Validation loss:', valid_loss)
-        valid_losses.append(valid_loss.value)
+    print('Validation loss:', valid_loss)
+    valid_losses.append(valid_loss.value)
 
-        y_pred_arr = y_pred
+    y_pred_arr = y_pred
 
-        # Calculate validation accuracy
-        y_pred = torch.tensor(y_pred, dtype=torch.int64)
-        # valid_labels_tensor = torch.from_numpy(Validation_set.labels)
-        valid_labels_tensor = torch.from_numpy(val_lab)
-        accuracy = torch.mean((y_pred == valid_labels_tensor).float())
-        print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
+    # Calculate validation accuracy
+    y_pred = torch.tensor(y_pred, dtype=torch.int64)
+    # valid_labels_tensor = torch.from_numpy(Validation_set.labels)
+    valid_labels_tensor = torch.from_numpy(val_lab)
+    accuracy = torch.mean((y_pred == valid_labels_tensor).float())
+    print('Validation accuracy: {:.4f}%'.format(float(accuracy) * 100))
 
-        y_true = np.asarray(val_lab)
-        wf1 = con.getF1(y_true, y_pred_arr)
+    y_true = np.asarray(val_lab)
+    wf1 = con.getF1(y_true, y_pred_arr)
 
-        wf1_percent = float(wf1) * 100
-        print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
+    wf1_percent = float(wf1) * 100
+    print('Weighted F1: {:.4f}%'.format(float(wf1) * 100))
 
     return y_true, y_pred_arr, val_accuracy, wf1_percent
 
