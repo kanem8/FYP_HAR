@@ -229,7 +229,7 @@ print("length of indexes = {}".format(len(indexes)))
 
 ctr = 0
 for jj in indexes:
-    l = int(y_val[jj+int(100/2)])
+    l = int(y_test[jj+int(100/2)])
     img_labels.append(l)
     # img_labels[ctr] = l
     ctr += 1

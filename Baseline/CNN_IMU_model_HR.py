@@ -508,7 +508,7 @@ if __name__ == '__main__':
     plt.legend()
     current_lr = get_lr(optimizer)
 
-    plt.title('CNN-2 Learning Curves - Learning Rate = {}'.format(current_lr))
+    plt.title('CNN-IMU-2 Learning Curves - Learning Rate = {}'.format(current_lr))
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.xticks(epochs)
