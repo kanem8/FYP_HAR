@@ -327,7 +327,7 @@ class MovingAverage(AverageBase):
         return self.value
 
 
-PATH = '/data/mark/saved_models/va1/cnn_imu_2.pt'
+PATH = '/data/mark/saved_models/va1/cnn_imu_2_b.pt'
 
 
 # # Model class must be defined somewhere
