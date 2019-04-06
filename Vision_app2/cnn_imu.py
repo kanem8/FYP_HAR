@@ -324,8 +324,8 @@ model.to(device)
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 # scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15], gamma=0.1)
 
-tot_epochs = 60
-step = int(tot_epochs/3)
+tot_epochs = 30
+step = int(tot_epochs/2)
 # optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9, nesterov=True)
 # optimizer = optim.RMSprop(model.parameters(), lr=0.0001, alpha=0.95)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step, gamma=0.1)
