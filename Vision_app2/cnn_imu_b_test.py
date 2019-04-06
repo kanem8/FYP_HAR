@@ -263,7 +263,7 @@ dataset_pickle = '/data/mark/NetworkDatasets/baseline/pamap2.data'
 
 
 dataset_test = pd.read_csv('/data/mark/NetworkDatasets/vision_app2_b/Test/figure_labels.csv', ',', header=0)
-test_path = '/data/mark/NetworkDatasets/vision_app2/Test/'
+test_path = '/data/mark/NetworkDatasets/vision_app2_b/Test/'
 
 # Validation data:
 test_set = Dataset(dataset_test, dataset_pickle, test_path, valid_transform, train=False)
